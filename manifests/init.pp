@@ -57,7 +57,7 @@ class bind (
   $channels                    = undef,
   $channels_hiera_merge        = true,
   $slave_dir                   = '/var/named/slaves',
-  $acls_dir                    = '/etc/named/acl.d',
+  $acls_dir                    = '/etc/named/acls.d',
   $acls_list                   = '/etc/named/acls',
   $acls                        = undef,
   $acls_hiera_merge            = true,
@@ -68,7 +68,7 @@ class bind (
   $masters_list                = '/etc/named/masters',
   $masters                     = undef,
   $masters_hiera_merge         = true,
-  $views_dir                   = '/etc/named/view.d',
+  $views_dir                   = '/etc/named/views.d',
   $views_list                  = '/etc/named/views',
   $views                       = undef,
   $views_hiera_merge           = true,
@@ -221,7 +221,7 @@ class bind (
     notify  => Service['named'],
   }
 
-  file { 'named.acl.d':
+  file { 'named.acls.d':
     ensure  => 'directory',
     path    => $acls_dir,
     purge   => true,
@@ -257,7 +257,7 @@ class bind (
     notify  => Service['named'],
   }
 
-  file { 'named.view.d':
+  file { 'named.views.d':
     ensure  => 'directory',
     path    => $views_dir,
     purge   => true,

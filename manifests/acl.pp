@@ -1,6 +1,6 @@
 # == Define: bind::acl
 #
-# Manage files /etc/named/acl.d and corresponding include statements in
+# Manage files /etc/named/acls.d and corresponding include statements in
 # /etc/named.conf
 #
 define bind::acl (

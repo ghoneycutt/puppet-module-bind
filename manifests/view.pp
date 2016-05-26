@@ -1,6 +1,6 @@
 # == Define: bind::view
 #
-# Manage files /etc/named/view.d and corresponding include statements in
+# Manage files /etc/named/views.d and corresponding include statements in
 # /etc/named.conf
 #
 define bind::view (

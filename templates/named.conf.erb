@@ -1,0 +1,69 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+options {
+  version "<%= @version %>";
+  notify <%= @notify_option %>;
+  recursion <%= @recursion %>;
+  zone-statistics <%= @zone_statistics %>;
+  allow-query { <%= @allow_query %>; };
+  allow-transfer { <%= @allow_transfer %>; };
+  cleaning-interval <%= @cleaning_interval %>;
+  check-names <%= @type %> <%= @check_names %>;
+  listen-on port <%= @port %> { <%= @listen_from %>; };
+  dnssec-enable <%= @dnssec_enable %>;
+  dnssec-validation <%= @dnssec_validation %>;
+  directory "<%= @directory %>";
+  dump-file "<%= @dump_file %>";
+  statistics-file "<%= @statistics_file %>";
+  memstatistics-file "<%= @memstatistics_file %>";
+};
+
+include "<%= @acls_list %>";
+
+include "<%= @masters_list %>";
+
+include "<%= @keys_list %>";
+
+controls { inet * port 953 allow { 127.0.0.1; 10.5.101.11; } keys { "rndc-key"; }; };
+
+include "<%= @views_list %>";
+
+logging {
+
+  include "<%= @channels_list %>";
+
+<% if @enable_logging_category_default == true -%>
+  category default { <%= @logging_category_default_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_general == true -%>
+  category general { <%= @logging_category_general_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_config == true -%>
+  category config { <%= @logging_category_config_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_client == true -%>
+  category client { <%= @logging_category_client_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_database == true -%>
+  category database { <%= @logging_category_database_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_network == true -%>
+  category network { <%= @logging_category_network_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_queries == true -%>
+  category queries { <%= @logging_category_queries_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_security == true -%>
+  category security { <%= @logging_category_security_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_resolver == true -%>
+  category resolver { <%= @logging_category_resolver_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_xfer_in == true -%>
+  category xfer-in { <%= @logging_category_xfer_in_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_xfer_out == true -%>
+  category xfer-out { <%= @logging_category_xfer_out_channels.join('; ') -%>; };
+<% end -%>
+};

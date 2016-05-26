@@ -1,0 +1,27 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+view "<%= @name %>" {
+<% if @match_clients == 'any' -%>
+  match-clients { <%= @match_clients %>; };
+<% else -%>
+  match-clients { "<%= @match_clients %>"; };
+<% end -%>
+<% if not @recursion.nil? -%>
+  recursion <%= @recursion %>;
+<% end -%>
+<% if @includes.empty? == false -%>
+<%   @includes.each do |path| -%>
+  include "<%= path %>";
+<%   end -%>
+<% end -%>
+<% if not @allow_update.nil? -%>
+  allow-update { "<%= @allow_update %>"; };
+<% end -%>
+<% if not @allow_update_forwarding.nil? -%>
+  allow-update-forwarding { "<%= @allow_update_forwarding %>"; };
+<% end -%>
+<% if not @allow_transfer.nil? -%>
+  allow-transfer { "<%= @allow_transfer %>"; };
+<% end -%>
+};

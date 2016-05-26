@@ -1,0 +1,10 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+zone "<%= @name %>" {
+  type <%= @type %>;
+<% if @type == 'slave' -%>
+  masters { <%= @masters %>; };
+<% end -%>
+  file "<%= @dir %><% if not @extra_path.nil? -%><%= @extra_path%><% end -%>/<%= @name %>";
+};

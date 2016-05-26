@@ -1,0 +1,12 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+channel <%= @name %> {
+<% if not @file.nil? -%>
+  file "<%= @file %>";
+<% end -%>
+<% if not @syslog_facility.nil? -%>
+  syslog <%= @syslog_facility %>;
+<% end -%>
+  severity <%= @severity %>;
+};

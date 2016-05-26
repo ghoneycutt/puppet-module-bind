@@ -1,0 +1,30 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+acl "<%= @name %>" {
+<% if not @not_entries.nil? and @not_entries.empty? == false -%>
+<%   @not_entries.each do |not_entry| -%>
+<%     if /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/.match(not_entry) -%>
+  !<%= not_entry %>;
+<%     else -%>
+  !"<%= not_entry %>";
+<%     end -%>
+<%   end -%>
+<% end -%>
+
+<% if not @entres.nil? and @entries.empty? == false -%>
+<%   @entries.each do |entry| -%>
+<%     if /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/.match(entry) -%>
+  <%= entry %>;
+<%     else -%>
+  "<%= entry %>";
+<%     end -%>
+<%   end -%>
+<% end -%>
+
+<% if not @keys.nil? -%>
+<%   @keys.each do |key| -%>
+  key "<%= key %>";
+<%   end -%>
+<% end -%>
+};

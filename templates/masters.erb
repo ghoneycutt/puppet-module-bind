@@ -2,7 +2,7 @@
 # DO NOT EDIT
 
 masters "<%= @name %>" {
-<% @entries.each do |k, v| -%>
+<% @entries.sort.each do |k, v| -%>
   <%= k %> key "<%= v %>";
 <% end -%>
 };

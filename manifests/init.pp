@@ -1,81 +1,86 @@
 # == Class: bind
 #
 class bind (
-  $package                     = 'bind-chroot',
-  $package_ensure              = 'present',
-  $config_path                 = '/etc/named.conf',
-  $config_dir                  = '/etc/named',
-  $rndc_key                    = '/etc/rndc.key',
-  $rndc_key_secret             = 'U803nlXs4b5x6t7UDw8hnw==',
-  $service                     = 'named',
-  $user                        = 'named',
-  $group                       = 'named',
-  $named_checkconf             = '/usr/sbin/named-checkconf',
-  $version                     = 'not so easy',
-  $notify_option               = 'no',
-  $recursion                   = 'no',
-  $zone_statistics             = 'yes',
-  $allow_query                 = 'any',
-  $allow_transfer              = 'none',
-  $cleaning_interval           = 1440,
-  $check_names                 = 'ignore',
-  $port                        = 53,
-  $listen_from                 = 'any',
-  $dnssec_enable               = 'no',
-  $dnssec_validation           = 'no',
-  $directory                   = '/var/named',
-  $dump_file                   = '/var/named/data/cache_dump.db',
-  $statistics_file             = '/var/named/data/named_stats.txt',
-  $memstatistics_file          = '/var/named/data/named_mem_stats.txt',
-  $type                        = 'slave', # could be master
-  $default_logging_channel     = 'default_syslog', # could also be default_debug, default_stderr, and null
-  $use_default_logging_channel = true,
-  $enable_logging_category_default    = false,
-  $logging_category_default_channels  = ['default_syslog'],
-  $enable_logging_category_general    = false,
-  $logging_category_general_channels  = ['default_syslog'],
-  $enable_logging_category_config     = false,
-  $logging_category_config_channels   = ['default_syslog'],
-  $enable_logging_category_client     = false,
-  $logging_category_client_channels   = ['default_syslog'],
-  $enable_logging_category_database   = false,
-  $logging_category_database_channels = ['default_syslog'],
-  $enable_logging_category_network    = false,
-  $logging_category_network_channels  = ['default_syslog'],
-  $enable_logging_category_queries    = false,
-  $logging_category_queries_channels  = ['default_syslog'],
-  $enable_logging_category_security   = false,
-  $logging_category_security_channels = ['default_syslog'],
-  $enable_logging_category_resolver   = false,
-  $logging_category_resolver_channels = ['default_syslog'],
-  $enable_logging_category_xfer_in    = false,
-  $logging_category_xfer_in_channels  = ['default_syslog'],
-  $enable_logging_category_xfer_out   = false,
-  $logging_category_xfer_out_channels = ['default_syslog'],
-  $channels_dir                = '/etc/named/channels.d',
-  $channels_list               = '/etc/named/channels',
-  $channels                    = undef,
-  $channels_hiera_merge        = true,
-  $slave_dir                   = '/var/named/slaves',
-  $acls_dir                    = '/etc/named/acls.d',
-  $acls_list                   = '/etc/named/acls',
-  $acls                        = undef,
-  $acls_hiera_merge            = true,
-  $keys                        = undef,
-  $keys_hiera_merge            = true,
-  $keys_list                   = '/etc/named/keys',
-  $masters_dir                 = '/etc/named/masters.d',
-  $masters_list                = '/etc/named/masters',
-  $masters                     = undef,
-  $masters_hiera_merge         = true,
-  $views_dir                   = '/etc/named/views.d',
-  $views_list                  = '/etc/named/views',
-  $views                       = undef,
-  $views_hiera_merge           = true,
-  $zones_dir                   = '/etc/named/zones.d',
-  $zones_hiera_merge           = true,
-  $zones                       = undef,
-  $zone_lists_dir              = '/etc/named/zone_lists',
+  $package                                   = 'bind-chroot',
+  $package_ensure                            = 'present',
+  $config_path                               = '/etc/named.conf',
+  $config_dir                                = '/etc/named',
+  $rndc_key                                  = '/etc/rndc.key',
+  $rndc_key_secret                           = 'U803nlXs4b5x6t7UDw8hnw==',
+  $service                                   = 'named',
+  $user                                      = 'named',
+  $group                                     = 'named',
+  $named_checkconf                           = '/usr/sbin/named-checkconf',
+  $version                                   = 'not so easy',
+  $notify_option                             = 'no',
+  $recursion                                 = 'no',
+  $zone_statistics                           = 'yes',
+  $allow_query                               = 'any',
+  $allow_transfer                            = 'none',
+  $cleaning_interval                         = 1440,
+  $check_names                               = 'ignore',
+  $port                                      = 53,
+  $listen_from                               = 'any',
+  $dnssec_enable                             = 'no',
+  $dnssec_validation                         = 'no',
+  $directory                                 = '/var/named',
+  $dump_file                                 = '/var/named/data/cache_dump.db',
+  $statistics_file                           = '/var/named/data/named_stats.txt',
+  $memstatistics_file                        = '/var/named/data/named_mem_stats.txt',
+  $type                                      = 'slave', # could be master
+  $default_logging_channel                   = 'default_syslog', # could also be default_debug, default_stderr, and null
+  $use_default_logging_channel               = true,
+  $enable_logging_category_default           = false,
+  $logging_category_default_channels         = ['default_syslog'],
+  $enable_logging_category_general           = false,
+  $logging_category_general_channels         = ['default_syslog'],
+  $enable_logging_category_config            = false,
+  $logging_category_config_channels          = ['default_syslog'],
+  $enable_logging_category_client            = false,
+  $logging_category_client_channels          = ['default_syslog'],
+  $enable_logging_category_database          = false,
+  $logging_category_database_channels        = ['default_syslog'],
+  $enable_logging_category_network           = false,
+  $logging_category_network_channels         = ['default_syslog'],
+  $enable_logging_category_queries           = false,
+  $logging_category_queries_channels         = ['default_syslog'],
+  $enable_logging_category_security          = false,
+  $logging_category_security_channels        = ['default_syslog'],
+  $enable_logging_category_resolver          = false,
+  $logging_category_resolver_channels        = ['default_syslog'],
+  $enable_logging_category_update            = false,
+  $logging_category_update_channels          = ['default_syslog'],
+  $enable_logging_category_update_security   = false,
+  $logging_category_update_security_channels = ['default_syslog'],
+  $enable_logging_category_xfer_in           = false,
+  $logging_category_xfer_in_channels         = ['default_syslog'],
+  $enable_logging_category_xfer_out          = false,
+  $logging_category_xfer_out_channels        = ['default_syslog'],
+  $channels_dir                              = '/etc/named/channels.d',
+  $channels_list                             = '/etc/named/channels',
+  $channels                                  = undef,
+  $channels_hiera_merge                      = true,
+  $slave_dir                                 = '/var/named/slaves',
+  $acls_dir                                  = '/etc/named/acls.d',
+  $acls_list                                 = '/etc/named/acls',
+  $acls                                      = undef,
+  $acls_hiera_merge                          = true,
+  $controls                                  = undef,
+  $keys                                      = undef,
+  $keys_hiera_merge                          = true,
+  $keys_list                                 = '/etc/named/keys',
+  $masters_dir                               = '/etc/named/masters.d',
+  $masters_list                              = '/etc/named/masters',
+  $masters                                   = undef,
+  $masters_hiera_merge                       = true,
+  $views_dir                                 = '/etc/named/views.d',
+  $views_list                                = '/etc/named/views',
+  $views                                     = undef,
+  $views_hiera_merge                         = true,
+  $zones_dir                                 = '/etc/named/zones.d',
+  $zones_hiera_merge                         = true,
+  $zones                                     = undef,
+  $zone_lists_dir                            = '/etc/named/zone_lists',
 ) {
 
   validate_string($package)
@@ -94,7 +99,9 @@ class bind (
   validate_string($allow_query)
   validate_string($allow_transfer)
   validate_integer($cleaning_interval)
-  validate_string($check_names)
+  validate_re($check_names, '^(fail|ignore|warn)$',
+    "bind::check_names is <${check_names}>. Valid values are 'fail', 'ignore' and 'warn'.")
+
   validate_integer($port)
   validate_string($listen_from)
   validate_string($dnssec_enable)
@@ -129,6 +136,10 @@ class bind (
   validate_array($logging_category_security_channels)
   validate_bool($enable_logging_category_resolver)
   validate_array($logging_category_resolver_channels)
+  validate_bool($enable_logging_category_update)
+  validate_array($logging_category_update_channels)
+  validate_bool($enable_logging_category_update_security)
+  validate_array($logging_category_update_security_channels)
   validate_bool($enable_logging_category_xfer_in)
   validate_array($logging_category_xfer_in_channels)
   validate_bool($enable_logging_category_xfer_out)
@@ -145,6 +156,11 @@ class bind (
   validate_absolute_path($views_list)
   validate_absolute_path($zones_dir)
   validate_absolute_path($zone_lists_dir)
+
+  if $controls != undef {
+    validate_hash($controls)
+  }
+
 
   if $channels != undef {
     validate_hash($channels)

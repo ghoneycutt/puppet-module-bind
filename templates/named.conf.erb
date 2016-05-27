@@ -25,7 +25,13 @@ include "<%= @masters_list %>";
 
 include "<%= @keys_list %>";
 
-controls { inet * port 953 allow { 127.0.0.1; 10.5.101.11; } keys { "rndc-key"; }; };
+<% if not @controls.nil? -%>
+controls {
+<%   @controls.sort.each do |k,v| -%>
+  inet <%= k -%> port <%= v['port'] -%> allow { <%= v['allows'].join('; ') -%>; }<% if v.key?('keys') -%> keys { "<%= v['keys'].join('"; "') -%>"; };<% else -%>;<% end -%>
+<%   end %>
+};
+<% end -%>
 
 include "<%= @views_list %>";
 
@@ -59,6 +65,12 @@ logging {
 <% end -%>
 <% if @enable_logging_category_resolver == true -%>
   category resolver { <%= @logging_category_resolver_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_update == true -%>
+  category update { <%= @logging_category_update_channels.join('; ') -%>; };
+<% end -%>
+<% if @enable_logging_category_update_security == true -%>
+  category update-security { <%= @logging_category_update_security_channels.join('; ') -%>; };
 <% end -%>
 <% if @enable_logging_category_xfer_in == true -%>
   category xfer-in { <%= @logging_category_xfer_in_channels.join('; ') -%>; };

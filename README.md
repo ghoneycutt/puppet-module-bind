@@ -34,6 +34,29 @@ Enable greatness
 
 - *Default*: true
 
+controls
+--------
+Specifies information for controls lines in the named.conf. The key is the IP
+address or `'*'`. The hash has subkeys that must include 'port' (string),
+'allows' (array) and optionally 'keys' (array).
+
+```
+# example
+
+bind::controls:
+  '*':
+    port: '953'
+    allows:
+      - '127.0.0.1'
+    keys:
+      - 'rndc-key'
+```
+
+- *Types*: hash or undef
+
+- *Default*: undef
+
+
 
 # define bind::acl parameters
 

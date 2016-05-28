@@ -2,11 +2,27 @@
 # DO NOT EDIT
 
 view "<%= @name %>" {
+  match-clients {
 <% if @match_clients == 'any' -%>
-  match-clients { <%= @match_clients %>; };
+    <%= @match_clients %>;
 <% else -%>
-  match-clients { "<%= @match_clients %>"; };
+<%   if @match_clients.class == Array -%>
+<%     @match_clients.each do |match| -%>
+<%       if match[0..0] == '!' -%>
+    !"<%= match[1..-1] %>";
+<%       else -%>
+    "<%= match %>";
+<%       end -%>
+<%     end -%>
+<%   else -%>
+<%     if @match_clients[0..0] == '!' -%>
+    !"<%= @match_clients[1..-1] %>";
+<%     else -%>
+    "<%= @match_clients %>";
+<%     end -%>
+<%   end -%>
 <% end -%>
+  };
 <% if not @recursion.nil? -%>
   recursion <%= @recursion %>;
 <% end -%>

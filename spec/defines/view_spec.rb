@@ -9,7 +9,9 @@ describe 'bind::view' do
       |# DO NOT EDIT
       |
       |view "rspec" {
-      |  match-clients { any; };
+      |  match-clients {
+      |    any;
+      |  };
       |};
     END
 
@@ -38,7 +40,9 @@ describe 'bind::view' do
       |# DO NOT EDIT
       |
       |view "rspec" {
-      |  match-clients { "10.0.0.0/8"; };
+      |  match-clients {
+      |    "10.0.0.0/8";
+      |  };
       |  recursion yes;
       |  include "10.0.0.0/16";
       |  include "included";
@@ -71,23 +75,135 @@ describe 'bind::view' do
     end
   end
 
-  context 'with match_clients set to valid <10.0.0.0/16>' do
-    let(:params) { { :match_clients => '10.0.0.0/16' } }
+  describe 'with match_clients' do
 
-    content = <<-END.gsub(/^\s+\|/, '')
-      |# This file is being maintained by Puppet.
-      |# DO NOT EDIT
-      |
-      |view "rspec" {
-      |  match-clients { "10.0.0.0/16"; };
-      |};
-    END
+    context 'set to \'any\'' do
+      let(:params) { { :match_clients => 'any' } }
 
-    it { should compile.with_all_deps }
-    it { should contain_class('bind') }
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    any;
+        |  };
+        |};
+      END
 
-    it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
-    it { should contain_concat_fragment('bind::view::rspec') }
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
+    context 'set to valid string without negation <10.0.0.0/16>' do
+      let(:params) { { :match_clients => '10.0.0.0/16' } }
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    "10.0.0.0/16";
+        |  };
+        |};
+      END
+
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
+
+    context 'set to valid string with negation <!10.0.0.0/16>' do
+      let(:params) { { :match_clients => '!10.0.0.0/16' } }
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    !"10.0.0.0/16";
+        |  };
+        |};
+      END
+
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
+
+    context 'set to valid array without negation <[10.0.0.0/16, 192.168.1.0/24]>' do
+      let(:params) { { :match_clients => ['10.0.0.0/16', '192.168.1.0/24'] } }
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    "10.0.0.0/16";
+        |    "192.168.1.0/24";
+        |  };
+        |};
+      END
+
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
+
+    context 'set to valid array with negation <[!10.0.0.0/16, !192.168.1.0/24]>' do
+      let(:params) { { :match_clients => ['!10.0.0.0/16', '!192.168.1.0/24'] } }
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    !"10.0.0.0/16";
+        |    !"192.168.1.0/24";
+        |  };
+        |};
+      END
+
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
+
+    context 'set to valid array with mixed negation <[10.0.0.0/16, !192.168.1.0/24]>' do
+      let(:params) { { :match_clients => ['10.0.0.0/16', '!192.168.1.0/24'] } }
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    "10.0.0.0/16";
+        |    !"192.168.1.0/24";
+        |  };
+        |};
+      END
+
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
   end
 
   context 'with recursion set to valid <10.0.0.0/16>' do
@@ -98,7 +214,9 @@ describe 'bind::view' do
       |# DO NOT EDIT
       |
       |view "rspec" {
-      |  match-clients { any; };
+      |  match-clients {
+      |    any;
+      |  };
       |  recursion no;
       |};
     END
@@ -122,7 +240,9 @@ describe 'bind::view' do
       |# DO NOT EDIT
       |
       |view "rspec" {
-      |  match-clients { any; };
+      |  match-clients {
+      |    any;
+      |  };
       |  include "included1";
       |  include "included2";
       |};
@@ -143,7 +263,9 @@ describe 'bind::view' do
       |# DO NOT EDIT
       |
       |view "rspec" {
-      |  match-clients { any; };
+      |  match-clients {
+      |    any;
+      |  };
       |  allow-update { "172.16.0.0/24"; };
       |};
     END
@@ -163,7 +285,9 @@ describe 'bind::view' do
       |# DO NOT EDIT
       |
       |view "rspec" {
-      |  match-clients { any; };
+      |  match-clients {
+      |    any;
+      |  };
       |  allow-update-forwarding { "172.16.0.0/16"; };
       |};
     END
@@ -183,7 +307,9 @@ describe 'bind::view' do
       |# DO NOT EDIT
       |
       |view "rspec" {
-      |  match-clients { any; };
+      |  match-clients {
+      |    any;
+      |  };
       |  allow-transfer { "10.0.0.0/8"; };
       |};
     END
@@ -222,10 +348,16 @@ describe 'bind::view' do
         :message => "bind::view::rspec::recursion is <.*> and must be either 'yes' or 'no'\.",
       },
       'string' => {
-        :name    => %w(match_clients allow_update allow_update_forwarding allow_transfer),
+        :name    => %w(allow_update allow_update_forwarding allow_transfer),
         :valid   => ['string'],
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
         :message => 'is not a string',
+      },
+      'string_or_array' => {
+        :name    => %w(match_clients),
+        :valid   => ['string', %w(array)],
+        :invalid => [{ 'ha' => 'sh' }, 3, 2.42, true, false],
+        :message => 'is not a string or an array',
       },
     }
 

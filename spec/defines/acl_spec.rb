@@ -5,9 +5,7 @@ describe 'bind::acl' do
 
   context 'with defaults for all parameters' do
     it 'should fail' do
-      expect {
-        should contain_class(subject)
-      }.to raise_error(Puppet::Error,/There must be at least one parameter of .* specified and all are undef/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /There must be at least one parameter of .* specified and all are undef/)
     end
   end
 
@@ -60,7 +58,7 @@ describe 'bind::acl' do
   end
 
   context 'with entries set to valid array' do
-    let(:params) { { :entries => [ '10.0.0.0/24', 'network' ] } }
+    let(:params) { { :entries => ['10.0.0.0/24', 'network'] } }
 
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.
@@ -81,7 +79,7 @@ describe 'bind::acl' do
   end
 
   context 'with not_entries set to valid array' do
-    let(:params) { { :not_entries => [ '66.66.66.66/23', 'not_network' ] } }
+    let(:params) { { :not_entries => ['66.66.66.66/23', 'not_network'] } }
 
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.
@@ -102,7 +100,7 @@ describe 'bind::acl' do
   end
 
   context 'with keys set to valid array' do
-    let(:params) { { :keys => [ 'key1', 'key2' ] } }
+    let(:params) { { :keys => %w(key1 key2) } }
 
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.

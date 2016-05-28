@@ -1,6 +1,5 @@
 require 'spec_helper'
 describe 'bind' do
-
   context 'with defaults for all parameters' do
     it { should contain_class('bind') }
   end
@@ -82,5 +81,4 @@ describe 'bind' do
       end # var[:name].each
     end # validations.sort.each
   end # describe 'variable type and content validations'
-
 end

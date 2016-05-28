@@ -30,7 +30,7 @@ describe 'bind::view' do
       {
         :match_clients           => '10.0.0.0/8',
         :recursion               => 'yes',
-        :includes                => [ '10.0.0.0/16', 'included' ],
+        :includes                => ['10.0.0.0/16', 'included'],
         :allow_update            => '172.16.0.0/16',
         :allow_update_forwarding => '172.16.0.0/24',
         :allow_transfer          => '10.0.0.0/24',

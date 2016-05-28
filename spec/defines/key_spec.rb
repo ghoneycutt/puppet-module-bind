@@ -6,9 +6,7 @@ describe 'bind::key' do
   # $secret is mandatory (nothing set)
   context 'with defaults for all parameters' do
     it 'should fail' do
-      expect {
-        should contain_class(subject)
-      }.to raise_error(Puppet::Error,/expects a value for parameter 'secret'/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'secret'/)
     end
   end
 
@@ -63,9 +61,7 @@ describe 'bind::key' do
       let(:params) { { :"#{param}" => '/absolute/path' } }
 
       it 'should fail' do
-        expect {
-          should contain_class(subject)
-        }.to raise_error(Puppet::Error,/expects a value for parameter 'secret'/)
+        expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'secret'/)
       end
     end
   end

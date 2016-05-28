@@ -6,9 +6,7 @@ describe 'bind::channel' do
   # $type is mandatory (nothing set)
   context 'with defaults for all parameters' do
     it 'should fail' do
-      expect {
-        should contain_class(subject)
-      }.to raise_error(Puppet::Error,/expects a value for parameter 'type'/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'type'/)
     end
   end
 
@@ -63,9 +61,7 @@ describe 'bind::channel' do
       let(:params) { { :"#{param}" => 'file' } }
 
       it 'should fail' do
-        expect {
-          should contain_class(subject)
-        }.to raise_error(Puppet::Error,/expects a value for parameter 'type'/)
+        expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'type'/)
       end
     end
   end
@@ -76,9 +72,7 @@ describe 'bind::channel' do
 
     # /!\ enhancement: fix error message to bind::channel::file
     it 'should fail' do
-      expect {
-        should contain_class(subject)
-      }.to raise_error(Puppet::Error,/bind::channel::syslog_facility and bind::channel_file cannot both be undef/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /bind::channel::syslog_facility and bind::channel_file cannot both be undef/)
     end
   end
 
@@ -92,9 +86,7 @@ describe 'bind::channel' do
     end
 
     it 'should fail' do
-      expect {
-        should contain_class(subject)
-      }.to raise_error(Puppet::Error,/bind::channel::syslog_facility and bind::channel_file cannot both be undef/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /bind::channel::syslog_facility and bind::channel_file cannot both be undef/)
     end
   end
 
@@ -229,7 +221,7 @@ describe 'bind::channel' do
         :name    => %w(type),
         :valid   => %w(file syslog stderr null),
         :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
-        :message => "bind::channel::rspec::type is <.*>\. Valid values are",
+        :message => 'bind::channel::rspec::type is <.*>\. Valid values are',
       },
       # enhancement: validate valid values for severity & syslog_facility
       # enhancement: use is_string for validation to be able to also catch nil

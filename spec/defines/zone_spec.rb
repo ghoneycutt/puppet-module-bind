@@ -9,9 +9,7 @@ describe 'bind::zone' do
 
   context 'with defaults for all parameters' do
     it 'should fail' do
-      expect {
-        should contain_class(subject)
-      }.to raise_error(Puppet::Error,/expects a value for parameter 'target'/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'target'/)
     end
   end
 
@@ -64,7 +62,7 @@ describe 'bind::zone' do
     let(:params) do
       {
         :target => '/absolute/path',
-        #mandatories
+        # mandatories
         :type   => 'master',
       }
     end
@@ -78,7 +76,7 @@ describe 'bind::zone' do
     let(:params) do
       {
         :tag    => 'testing',
-        #mandatories
+        # mandatories
         :target => '/absolute/path',
         :type   => 'master',
       }
@@ -93,7 +91,7 @@ describe 'bind::zone' do
     let(:params) do
       {
         :extra_path => '/SPECtacular',
-        #mandatories
+        # mandatories
         :target     => '/absolute/path',
         :type       => 'master',
       }
@@ -119,7 +117,7 @@ describe 'bind::zone' do
       {
         :masters => 'master-spec',
         :type    => 'master',
-        #mandatories
+        # mandatories
         :target  => '/absolute/path',
       }
     end
@@ -144,7 +142,7 @@ describe 'bind::zone' do
       {
         :masters => 'master-spec',
         :type    => 'slave',
-        #mandatories
+        # mandatories
         :target  => '/absolute/path',
       }
     end
@@ -169,15 +167,13 @@ describe 'bind::zone' do
     let(:params) do
       {
         :type    => 'slave',
-        #mandatories
+        # mandatories
         :target  => '/absolute/path',
       }
     end
 
     it 'should fail' do
-      expect {
-        should contain_class(subject)
-      }.to raise_error(Puppet::Error,/If type is slave, then masters must be specified\. Value for type is <slave> and masters is <>\./)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /If type is slave, then masters must be specified\. Value for type is <slave> and masters is <>\./)
     end
   end
   context 'with type set to valid <slave> and master set to <master-spec>' do
@@ -185,7 +181,7 @@ describe 'bind::zone' do
       {
         :type    => 'slave',
         :masters => 'master-spec',
-        #mandatories
+        # mandatories
         :target  => '/absolute/path',
       }
     end

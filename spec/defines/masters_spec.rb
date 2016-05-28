@@ -6,9 +6,7 @@ describe 'bind::masters' do
   # $secret is mandatory (nothing set)
   context 'with defaults for all parameters' do
     it 'should fail' do
-      expect {
-        should contain_class(subject)
-      }.to raise_error(Puppet::Error,/expects a value for parameter 'entries'/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'entries'/)
     end
   end
 

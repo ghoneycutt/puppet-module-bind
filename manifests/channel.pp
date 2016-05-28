@@ -13,14 +13,16 @@ define bind::channel (
   validate_re($type, '^(file|syslog|stderr|null)$',
     "bind::channel::${name}::type is <${type}>. Valid values are 'file', 'syslog', 'stderr', and 'null'.")
 
-  if $file != undef {
-    validate_string($file)
+  if ($file != undef) and (is_string($file) == false) {
+    fail('bind::channel::file is not a string')
   }
 
-  validate_string($severity)
+  if is_string($severity) == false {
+    fail('bind::channel::severity is not a string')
+  }
 
-  if $syslog_facility != undef {
-    validate_string($syslog_facility)
+  if ($syslog_facility != undef) and (is_string($syslog_facility) == false) {
+    fail('bind::channel::syslog_facility is not a string')
   }
 
   if $syslog_facility == undef and $file == undef {

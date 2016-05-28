@@ -225,12 +225,10 @@ describe 'bind::channel' do
         :message => 'bind::channel::rspec::type is <.*>\. Valid values are',
       },
       # enhancement: validate valid values for severity & syslog_facility
-      # enhancement: use is_string for validation to be able to also catch nil
-      # /!\ Downgrade for Puppet 3.x: remove fixnum and float from invalid list
       'string' => {
         :name    => %w(file severity syslog_facility),
         :valid   => ['string'],
-        :invalid => [%w(array), { 'ha' => 'sh' }, true, false],
+        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
         :message => 'is not a string',
       },
     }

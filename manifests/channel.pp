@@ -24,7 +24,7 @@ define bind::channel (
   }
 
   if $syslog_facility == undef and $file == undef {
-    fail('bind::channel::syslog_facility and bind::channel_file cannot both be undef')
+    fail('bind::channel::syslog_facility and bind::channel::file cannot both be undef')
   }
 
   include ::bind

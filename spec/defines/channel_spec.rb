@@ -72,9 +72,8 @@ describe 'bind::channel' do
   context 'with type set to valid value' do
     let(:params) { { :type => 'file' } }
 
-    # /!\ enhancement: fix error message to bind::channel::file
     it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /bind::channel::syslog_facility and bind::channel_file cannot both be undef/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /bind::channel::syslog_facility and bind::channel::file cannot both be undef/)
     end
   end
 
@@ -88,7 +87,7 @@ describe 'bind::channel' do
     end
 
     it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /bind::channel::syslog_facility and bind::channel_file cannot both be undef/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /bind::channel::syslog_facility and bind::channel::file cannot both be undef/)
     end
   end
 
@@ -228,7 +227,6 @@ describe 'bind::channel' do
       # enhancement: validate valid values for severity & syslog_facility
       # enhancement: use is_string for validation to be able to also catch nil
       # /!\ Downgrade for Puppet 3.x: remove fixnum and float from invalid list
-
       'string' => {
         :name    => %w(file severity syslog_facility),
         :valid   => ['string'],

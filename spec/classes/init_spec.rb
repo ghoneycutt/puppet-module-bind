@@ -8,7 +8,7 @@ describe 'bind' do
     # set needed custom facts and variables
     let(:facts) do
       {
-        #:fact => 'value',
+        :osfamily => 'RedHat',
       }
     end
     # /!\ template does not support $include = undef

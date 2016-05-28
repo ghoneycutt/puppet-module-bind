@@ -44,12 +44,11 @@ describe 'bind' do
         :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => "bind::type is <.*> and must be 'master' or 'slave'\.",
       },
-      # Enhancement: fix error message
       'regex for default_logging_channel' => {
         :name    => %w(default_logging_channel),
         :valid   => %w(default_syslog default_debug default_stderr null),
         :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
-        :message => "bind::type is <.*> and valid values are 'default_syslog', 'default_debug', 'default_stderr' and 'null'\.",
+        :message => "bind::default_logging_channel is <.*> and valid values are 'default_syslog', 'default_debug', 'default_stderr' and 'null'\.",
       },
       # /!\ Downgrade for Puppet 3.x: remove fixnum and float from invalid list
       'string' => {

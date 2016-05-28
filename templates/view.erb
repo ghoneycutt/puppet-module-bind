@@ -10,7 +10,7 @@ view "<%= @name %>" {
 <% if not @recursion.nil? -%>
   recursion <%= @recursion %>;
 <% end -%>
-<% if @includes.empty? == false -%>
+<% if not @includes.nil? and @includes.empty? == false -%>
 <%   @includes.each do |path| -%>
   include "<%= path %>";
 <%   end -%>

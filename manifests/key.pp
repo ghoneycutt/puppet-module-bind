@@ -6,8 +6,14 @@ define bind::key (
   $path      = "/etc/named/${name}.key",
 ) {
 
-  validate_string($secret)
-  validate_string($algorithm)
+  if is_string($secret) == false {
+    fail('bind::key::secret is not a string')
+  }
+
+  if is_string($algorithm) == false {
+    fail('bind::key::algorithm is not a string')
+  }
+
   validate_absolute_path($path)
 
   include ::bind

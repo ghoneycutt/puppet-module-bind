@@ -45,15 +45,20 @@ define bind::zone (
   validate_re($type, '^(master|slave)$',
     "bind::zone::${name}::type is <${type}> and must be 'master' or 'slave'.")
 
-  validate_string($name)
-  validate_string($tag)
+  if is_string($name) == false {
+    fail('bind::zone::name is not a string')
+  }
+
+  if is_string($tag) == false {
+    fail('bind::zone::tag is not a string')
+  }
 
   if $type == 'slave' and $masters == undef {
     fail("If type is slave, then masters must be specified. Value for type is <${type}> and masters is <${masters}>.")
   }
 
-  if $masters != undef {
-    validate_string($masters)
+  if ($masters != undef) and (is_string($masters) == false) {
+    fail('bind::zone::masters is not a string')
   }
 
   $dir = $type ? {

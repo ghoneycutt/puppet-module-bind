@@ -12,8 +12,8 @@ define bind::view (
   $allow_transfer          = undef,
 ) {
 
-  if is_string($match_clients) == false {
-    fail('bind::view::match_clients is not a string')
+  if is_string($match_clients) == false and is_array($match_clients) == false {
+    fail('bind::view::match_clients is not a string or an array')
   }
 
   if $recursion != undef {

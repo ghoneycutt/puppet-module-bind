@@ -27,7 +27,7 @@ class bind (
   $dump_file                                 = '/var/named/data/cache_dump.db',
   $statistics_file                           = '/var/named/data/named_stats.txt',
   $memstatistics_file                        = '/var/named/data/named_mem_stats.txt',
-  $type                                      = 'slave', # could be master
+  $type                                      = 'master',
   $default_logging_channel                   = 'default_syslog', # could also be default_debug, default_stderr, and null
   $use_default_logging_channel               = true,
   $enable_logging_category_default           = false,

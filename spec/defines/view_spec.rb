@@ -3,11 +3,7 @@ require 'spec_helper'
 describe 'bind::view' do
   let(:title) { 'rspec' }
 
-  # /!\ template does not support $include = undef
-  # workaround is to set $include to an empty array
   context 'with defaults for all parameters' do
-    let(:params) { { :includes => [] } }
-
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.
       |# DO NOT EDIT
@@ -76,14 +72,7 @@ describe 'bind::view' do
   end
 
   context 'with match_clients set to valid <10.0.0.0/16>' do
-    let(:params) do
-      {
-        :match_clients => '10.0.0.0/16',
-        # /!\ template does not support $include = undef
-        # workaround is to set $include to an empty array
-        :includes      => [],
-      }
-    end
+    let(:params) { { :match_clients => '10.0.0.0/16' } }
 
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.
@@ -102,14 +91,7 @@ describe 'bind::view' do
   end
 
   context 'with recursion set to valid <10.0.0.0/16>' do
-    let(:params) do
-      {
-        :recursion => 'no',
-        # /!\ template does not support $include = undef
-        # workaround is to set $include to an empty array
-        :includes  => [],
-      }
-    end
+    let(:params) { { :recursion => 'no' } }
 
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.
@@ -154,14 +136,7 @@ describe 'bind::view' do
   end
 
   context 'with allow_update set to valid <172.16.0.0/24>' do
-    let(:params) do
-      {
-        :allow_update => '172.16.0.0/24',
-        # /!\ template does not support $include = undef
-        # workaround is to set $include to an empty array
-        :includes     => [],
-      }
-    end
+    let(:params) { { :allow_update => '172.16.0.0/24' } }
 
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.
@@ -181,14 +156,7 @@ describe 'bind::view' do
   end
 
   context 'with allow_update_forwarding set to valid <172.16.0.0/16>' do
-    let(:params) do
-      {
-        :allow_update_forwarding => '172.16.0.0/16',
-        # /!\ template does not support $include = undef
-        # workaround is to set $include to an empty array
-        :includes                => [],
-      }
-    end
+    let(:params) { { :allow_update_forwarding => '172.16.0.0/16' } }
 
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.
@@ -208,14 +176,7 @@ describe 'bind::view' do
   end
 
   context 'with allow_update set to valid <172.16.0.0/24>' do
-    let(:params) do
-      {
-        :allow_transfer => '10.0.0.0/8',
-        # /!\ template does not support $include = undef
-        # workaround is to set $include to an empty array
-        :includes       => [],
-      }
-    end
+    let(:params) { { :allow_transfer => '10.0.0.0/8' } }
 
     content = <<-END.gsub(/^\s+\|/, '')
       |# This file is being maintained by Puppet.
@@ -241,11 +202,9 @@ describe 'bind::view' do
         #:fact => 'value',
       }
     end
-    # /!\ template does not support $include = undef
-    # workaround is to set $include to an empty array
     let(:mandatory_params) do
       {
-        :includes => [],
+        #:param => 'value',
       }
     end
 

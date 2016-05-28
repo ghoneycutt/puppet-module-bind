@@ -263,10 +263,12 @@ describe 'bind::view' do
         :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => "bind::view::rspec::recursion is <.*> and must be either 'yes' or 'no'\.",
       },
+      # enhancement: use is_string for validation to be able to also catch nil
+      # /!\ Downgrade for Puppet 3.x: remove fixnum and float from invalid list
       'string' => {
         :name    => %w(match_clients allow_update allow_update_forwarding allow_transfer),
         :valid   => ['string'],
-        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :invalid => [%w(array), { 'ha' => 'sh' }, true, false],
         :message => 'is not a string',
       },
     }

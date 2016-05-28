@@ -5,8 +5,9 @@ describe 'bind::channel' do
 
   # $type is mandatory (nothing set)
   context 'with defaults for all parameters' do
+    # message format (Puppet4|Puppet3)
     it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'type'/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(expects a value for parameter 'type'|Must pass type)/)
     end
   end
 
@@ -60,8 +61,9 @@ describe 'bind::channel' do
     context "with #{param} set to valid value" do
       let(:params) { { :"#{param}" => 'file' } }
 
+      # message format (Puppet4|Puppet3)
       it 'should fail' do
-        expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'type'/)
+        expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(expects a value for parameter 'type'|Must pass type)/)
       end
     end
   end
@@ -225,10 +227,12 @@ describe 'bind::channel' do
       },
       # enhancement: validate valid values for severity & syslog_facility
       # enhancement: use is_string for validation to be able to also catch nil
+      # /!\ Downgrade for Puppet 3.x: remove fixnum and float from invalid list
+
       'string' => {
         :name    => %w(file severity syslog_facility),
         :valid   => ['string'],
-        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :invalid => [%w(array), { 'ha' => 'sh' }, true, false],
         :message => 'is not a string',
       },
     }

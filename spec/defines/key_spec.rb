@@ -5,8 +5,9 @@ describe 'bind::key' do
 
   # $secret is mandatory (nothing set)
   context 'with defaults for all parameters' do
+    # message format (Puppet4|Puppet3)
     it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'secret'/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(expects a value for parameter 'secret'|Must pass secret)/)
     end
   end
 
@@ -60,8 +61,9 @@ describe 'bind::key' do
     context "with #{param} set to valid value" do
       let(:params) { { :"#{param}" => '/absolute/path' } }
 
+      # message format (Puppet4|Puppet3)
       it 'should fail' do
-        expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'secret'/)
+        expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(expects a value for parameter 'secret'|Must pass secret)/)
       end
     end
   end
@@ -148,10 +150,11 @@ describe 'bind::key' do
         :message => 'is not an absolute path',
       },
       # enhancement: use is_string for validation to be able to also catch nil
+      # /!\ Downgrade for Puppet 3.x: remove fixnum and float from invalid list
       'string' => {
         :name    => %w(algorithm secret),
         :valid   => ['string'],
-        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :invalid => [%w(array), { 'ha' => 'sh' }, true, false],
         :message => 'is not a string',
       },
     }

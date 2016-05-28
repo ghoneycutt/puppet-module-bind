@@ -55,7 +55,7 @@ describe 'bind' do
       'string' => {
         :name    => %w(package package_ensure rndc_key_secret user group version notify_option recursion zone_statistics allow_query allow_transfer listen_from dnssec_enable dnssec_validation ),
         :valid   => ['string'],
-        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :invalid => [%w(array), { 'ha' => 'sh' }, true, false],
         :message => 'is not a string',
       },
     }

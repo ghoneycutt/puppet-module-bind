@@ -8,8 +8,9 @@ describe 'bind::zone' do
   end
 
   context 'with defaults for all parameters' do
+    # message format (Puppet4|Puppet3)
     it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /expects a value for parameter 'target'/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /(expects a value for parameter 'target'|Must pass target)/)
     end
   end
 
@@ -230,10 +231,12 @@ describe 'bind::zone' do
         :invalid => ['../invalid', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => 'is not an absolute path',
       },
+      # enhancement: use is_string for validation to be able to also catch nil
+      # /!\ Downgrade for Puppet 3.x: remove fixnum and float from invalid list
       'string' => {
         :name    => %w(tag masters),
         :valid   => ['string'],
-        :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
+        :invalid => [%w(array), { 'ha' => 'sh' }, true, false],
         :message => 'is not a string',
       },
     }

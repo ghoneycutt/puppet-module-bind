@@ -12,7 +12,9 @@ define bind::view (
   $allow_transfer          = undef,
 ) {
 
-  validate_string($match_clients)
+  if is_string($match_clients) == false {
+    fail('bind::view::match_clients is not a string')
+  }
 
   if $recursion != undef {
     validate_re($recursion, '^(yes|no)$',
@@ -23,16 +25,16 @@ define bind::view (
     validate_array($includes)
   }
 
-  if $allow_update != undef {
-    validate_string($allow_update)
+  if ($allow_update != undef) and (is_string($allow_update) == false) {
+    fail('bind::view::allow_update is not a string')
   }
 
-  if $allow_update_forwarding != undef {
-    validate_string($allow_update_forwarding)
+  if ($allow_update_forwarding != undef) and (is_string($allow_update_forwarding) == false) {
+    fail('bind::view::allow_update_forwarding is not a string')
   }
 
-  if $allow_transfer != undef {
-    validate_string($allow_transfer)
+  if ($allow_transfer != undef) and (is_string($allow_transfer) == false) {
+    fail('bind::view::allow_transfer is not a string')
   }
 
   include ::bind

@@ -114,7 +114,7 @@ class bind (
     "bind::type is <${type}> and must be 'master' or 'slave'.")
 
   validate_re($default_logging_channel, '^(default_syslog|default_debug|default_stderr|null)$',
-    "bind::type is <${default_logging_channel}> and valid values are 'default_syslog', 'default_debug', 'default_stderr' and 'null'.")
+    "bind::default_logging_channel is <${default_logging_channel}> and valid values are 'default_syslog', 'default_debug', 'default_stderr' and 'null'.")
 
   validate_bool($use_default_logging_channel)
 

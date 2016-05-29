@@ -5,15 +5,14 @@ describe 'bind::acl' do
 
   context 'with defaults for all parameters' do
     it 'should fail' do
-      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /There must be at least one parameter of .* specified and all are undef/)
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /There must be at least one parameter of .* specified and both are undef/)
     end
   end
 
   context 'with all parameters set to valid values' do
     let(:params) do
       {
-        :entries     => %w(10.0.0.0/24 network),
-        :not_entries => %w(66.66.66.66/23 not_network),
+        :entries     => %w(10.0.0.0/24 network !66.66.66.66/23 !not_network),
         :keys        => %w(key1 key2),
       }
     end
@@ -23,11 +22,10 @@ describe 'bind::acl' do
       |# DO NOT EDIT
       |
       |acl "rspec" {
-      |  !66.66.66.66/23;
-      |  !"not_network";
-      |
       |  10.0.0.0/24;
       |  "network";
+      |  !66.66.66.66/23;
+      |  !"not_network";
       |
       |  key "key1";
       |  key "key2";
@@ -57,46 +55,46 @@ describe 'bind::acl' do
     end
   end
 
-  context 'with entries set to valid array' do
-    let(:params) { { :entries => ['10.0.0.0/24', 'network'] } }
+  describe 'with entries' do
+    context 'set to an array with IP address - there are no quotes' do
+      let(:params) { { :entries => ['10.0.0.0/24', '!192.168.1.0/24'] } }
 
-    content = <<-END.gsub(/^\s+\|/, '')
-      |# This file is being maintained by Puppet.
-      |# DO NOT EDIT
-      |
-      |acl "rspec" {
-      |
-      |  10.0.0.0/24;
-      |  "network";
-      |
-      |};
-    END
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |acl "rspec" {
+        |  10.0.0.0/24;
+        |  !192.168.1.0/24;
+        |
+        |};
+      END
 
-    it { should compile.with_all_deps }
-    it { should contain_class('bind') }
-    it { should contain_file('/etc/named/acls.d/rspec').with_content(content) }
-    it { should contain_concat_fragment('bind::acl::rspec') }
-  end
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+      it { should contain_file('/etc/named/acls.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::acl::rspec') }
+    end
 
-  context 'with not_entries set to valid array' do
-    let(:params) { { :not_entries => ['66.66.66.66/23', 'not_network'] } }
+    context 'set to an array with non-IP addresses - there are quotes' do
+      let(:params) { { :entries => ['network', '!not_network'] } }
 
-    content = <<-END.gsub(/^\s+\|/, '')
-      |# This file is being maintained by Puppet.
-      |# DO NOT EDIT
-      |
-      |acl "rspec" {
-      |  !66.66.66.66/23;
-      |  !"not_network";
-      |
-      |
-      |};
-    END
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |acl "rspec" {
+        |  "network";
+        |  !"not_network";
+        |
+        |};
+      END
 
-    it { should compile.with_all_deps }
-    it { should contain_class('bind') }
-    it { should contain_file('/etc/named/acls.d/rspec').with_content(content) }
-    it { should contain_concat_fragment('bind::acl::rspec') }
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+      it { should contain_file('/etc/named/acls.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::acl::rspec') }
+    end
   end
 
   context 'with keys set to valid array' do
@@ -107,7 +105,6 @@ describe 'bind::acl' do
       |# DO NOT EDIT
       |
       |acl "rspec" {
-      |
       |
       |  key "key1";
       |  key "key2";
@@ -135,7 +132,7 @@ describe 'bind::acl' do
 
     validations = {
       'array' => {
-        :name    => %w(entries not_entries keys),
+        :name    => %w(entries keys),
         :valid   => [%w(ar ray)],
         :invalid => ['string', { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => 'is not an Array',

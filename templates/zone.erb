@@ -7,4 +7,13 @@ zone "<%= @name %>" {
   masters { <%= @masters %>; };
 <% end -%>
   file "<%= @dir %><% if not @extra_path.nil? -%><%= @extra_path%><% end -%>/<%= @name %>";
+<% if not @update_policies.nil? -%>
+
+  update-policy
+  {
+<%   @update_policies.sort.each do |k,v| -%>
+    grant <%= v['key'] -%> <%= v['matchtype'] -%> <%= k -%>.<% if not v['rrs'].nil? and v['rrs'].empty? == false -%> <%= v['rrs'].join(' ') -%><% end -%>;
+<%   end -%>
+  };
+<% end -%>
 };

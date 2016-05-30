@@ -237,6 +237,12 @@ describe 'bind::zone' do
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
         :message => 'is not a string',
       },
+      'hash' => {
+        :name    => %w(update_policies),
+        :valid   => [{ 'ha' => 'sh' }],
+        :invalid => ['string', 3, 2.42, %w(array), true, false, nil],
+        :message => 'is not a Hash',
+      },
     }
 
     validations.sort.each do |type, var|

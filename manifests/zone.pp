@@ -28,10 +28,11 @@
 #
 define bind::zone (
   $target,
-  $tag        = $name, # tag each zone with its name unless a tag is provided
-  $extra_path = undef, # optional extra dir structure - must be absolute, ie '/internal'
-  $masters    = undef, # if type is slave, this must be specified, else ignored
-  $type       = undef, # master or slave
+  $tag             = $name, # tag each zone with its name unless a tag is provided
+  $extra_path      = undef, # optional extra dir structure - must be absolute, ie '/internal'
+  $masters         = undef, # if type is slave, this must be specified, else ignored
+  $type            = undef, # master or slave
+  $update_policies = undef,
 ) {
 
   include ::bind
@@ -59,6 +60,10 @@ define bind::zone (
 
   if ($masters != undef) and (is_string($masters) == false) {
     fail('bind::zone::masters is not a string')
+  }
+
+  if $update_policies != undef {
+    validate_hash($update_policies)
   }
 
   $dir = $type ? {

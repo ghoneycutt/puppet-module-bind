@@ -42,6 +42,8 @@ class bind (
   $logging_category_database_channels        = ['default_syslog'],
   $enable_logging_category_network           = false,
   $logging_category_network_channels         = ['default_syslog'],
+  $enable_logging_category_notify           = false,
+  $logging_category_notify_channels         = ['default_syslog'],
   $enable_logging_category_queries           = false,
   $logging_category_queries_channels         = ['default_syslog'],
   $enable_logging_category_security          = false,
@@ -130,6 +132,8 @@ class bind (
   validate_array($logging_category_database_channels)
   validate_bool($enable_logging_category_network)
   validate_array($logging_category_network_channels)
+  validate_bool($enable_logging_category_notify)
+  validate_array($logging_category_notify_channels)
   validate_bool($enable_logging_category_queries)
   validate_array($logging_category_queries_channels)
   validate_bool($enable_logging_category_security)

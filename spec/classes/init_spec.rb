@@ -27,7 +27,7 @@ describe 'bind' do
         :message => 'is not an absolute path',
       },
       'bool' => {
-        :name    => %w(use_default_logging_channel enable_logging_category_default enable_logging_category_general enable_logging_category_config enable_logging_category_client enable_logging_category_database enable_logging_category_network enable_logging_category_queries enable_logging_category_security enable_logging_category_resolver enable_logging_category_update enable_logging_category_update_security enable_logging_category_xfer_in enable_logging_category_xfer_out),
+        :name    => %w(use_default_logging_channel enable_logging_category_default enable_logging_category_general enable_logging_category_config enable_logging_category_client enable_logging_category_database enable_logging_category_network enable_logging_category_notify enable_logging_category_queries enable_logging_category_security enable_logging_category_resolver enable_logging_category_update enable_logging_category_update_security enable_logging_category_xfer_in enable_logging_category_xfer_out),
         :valid   => [true, false],
         :invalid => ['true', 'false', 'string', %w(array), { 'ha' => 'sh' }, 3, 2.42, nil],
         :message => 'is not a boolean',

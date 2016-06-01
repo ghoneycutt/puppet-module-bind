@@ -57,6 +57,9 @@ logging {
 <% if @enable_logging_category_network == true -%>
   category network { <%= @logging_category_network_channels.join('; ') -%>; };
 <% end -%>
+<% if @enable_logging_category_notify == true -%>
+  category notify { <%= @logging_category_notify_channels.join('; ') -%>; };
+<% end -%>
 <% if @enable_logging_category_queries == true -%>
   category queries { <%= @logging_category_queries_channels.join('; ') -%>; };
 <% end -%>

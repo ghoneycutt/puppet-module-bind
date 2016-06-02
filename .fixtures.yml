@@ -1,5 +1,8 @@
 fixtures:
   repositories:
+    common:
+      repo: 'https://github.com/ghoneycutt/puppet-module-common.git'
+      ref: 'v1.6.0'
     concat:
       repo: 'https://github.com/puppetlabs/puppetlabs-concat.git'
       ref: '2.1.0'

@@ -41,6 +41,14 @@ define bind::zone (
 
   if $extra_path != undef {
     validate_absolute_path($extra_path)
+    $zones_dir = "${::bind::zones_dir}${extra_path}"
+  } else {
+    $zones_dir = $::bind::zones_dir
+  }
+  $path = "${zones_dir}/${name}"
+
+  if ! defined(Common::Mkdir_p[$zones_dir]) {
+    common::mkdir_p { $zones_dir: }
   }
 
   validate_re($type, '^(master|slave)$',
@@ -71,18 +79,21 @@ define bind::zone (
     'master' => 'master',
   }
 
-  file { "${::bind::zones_dir}/${name}":
+  file { $path:
     ensure  => 'file',
     content => template('bind/zone.erb'),
     owner   => $::bind::user,
     group   => $::bind::group,
     mode    => '0640',
-    require => Package['bind'],
+    require => [
+      Package['bind'],
+      Common::Mkdir_p[$zones_dir],
+    ],
   }
 
   @concat_fragment { "bind::zone::${name}":
     target  => $target,
-    content => "include \"${::bind::zones_dir}/${name}\";",
+    content => "include \"${path}\";",
     tag     => $tag,
   }
 }

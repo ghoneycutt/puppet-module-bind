@@ -39,21 +39,23 @@ describe 'bind::zone' do
     it { should compile.with_all_deps }
     it { should contain_class('bind') }
 
+    it { should contain_common__mkdir_p('/etc/named/zones.d/internal') }
+
     it do
-      should contain_file('/etc/named/zones.d/rspec').with({
+      should contain_file('/etc/named/zones.d/internal/rspec').with({
         'ensure'  => 'file',
         'content' => content,
         'owner'   => 'named',
         'group'   => 'named',
         'mode'    => '0640',
-        'require' => 'Package[bind]',
+        'require' => ['Package[bind]','Common::Mkdir_p[/etc/named/zones.d/internal]'],
       })
     end
 
     it do
       should contain_concat_fragment('bind::zone::rspec').with({
         'target'  => '/etc/named/zone_lists/internal.zones',
-        'content' => 'include "/etc/named/zones.d/rspec";',
+        'content' => 'include "/etc/named/zones.d/internal/rspec";',
         'tag'     => 'internal',
       })
     end
@@ -110,7 +112,7 @@ describe 'bind::zone' do
 
     it { should compile.with_all_deps }
     it { should contain_class('bind') }
-    it { should contain_file('/etc/named/zones.d/rspec').with_content(content) }
+    it { should contain_file('/etc/named/zones.d/SPECtacular/rspec').with_content(content) }
   end
 
   context 'with masters set to valid <master-spec> and type set to <master>' do

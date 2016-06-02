@@ -353,6 +353,12 @@ describe 'bind::view' do
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
         :message => 'is not a string',
       },
+      'integer' => {
+        :name    => %w(order),
+        :valid   => [10],
+        :invalid => [%w(array), { 'ha' => 'sh' }, 'string', 2.42, true, false],
+        :message => 'is not an integer',
+      },
       'string_or_array' => {
         :name    => %w(match_clients),
         :valid   => ['string', %w(array)],

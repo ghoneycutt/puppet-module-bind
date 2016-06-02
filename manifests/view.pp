@@ -10,6 +10,7 @@ define bind::view (
   $allow_update            = undef,
   $allow_update_forwarding = undef,
   $allow_transfer          = undef,
+  $order                   = undef,
 ) {
 
   if is_string($match_clients) == false and is_array($match_clients) == false {
@@ -37,6 +38,10 @@ define bind::view (
     fail('bind::view::allow_transfer is not a string')
   }
 
+  if ($order != undef) and (is_integer($order) == false) {
+    fail('bind::view::order is not an integer')
+  }
+
   include ::bind
 
   file { "${::bind::views_dir}/${name}":
@@ -52,5 +57,6 @@ define bind::view (
     target  => $::bind::views_list,
     content => "include \"${::bind::views_dir}/${name}\";",
     tag     => 'bind_view',
+    order   => $order,
   }
 }

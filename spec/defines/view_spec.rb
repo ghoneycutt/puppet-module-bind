@@ -32,6 +32,7 @@ describe 'bind::view' do
         :allow_update            => '172.16.0.0/16',
         :allow_update_forwarding => '172.16.0.0/24',
         :allow_transfer          => '10.0.0.0/24',
+        :order                   => '23',
       }
     end
 
@@ -71,6 +72,7 @@ describe 'bind::view' do
         'target'  => '/etc/named/views',
         'content' => 'include "/etc/named/views.d/rspec";',
         'tag'     => 'bind_view',
+        'order'   => '23',
       })
     end
   end
@@ -321,6 +323,15 @@ describe 'bind::view' do
     it { should contain_concat_fragment('bind::view::rspec') }
   end
 
+  context 'with order set to valid <242>' do
+    let(:params) { { :order => '242' } }
+
+    it { should compile.with_all_deps }
+    it { should contain_class('bind') }
+
+    it { should contain_concat_fragment('bind::view::rspec').with_order('242') }
+  end
+
   describe 'variable type and content validations' do
     # set needed custom facts and variables
     let(:facts) do
@@ -356,7 +367,7 @@ describe 'bind::view' do
       'integer' => {
         :name    => %w(order),
         :valid   => [10],
-        :invalid => [%w(array), { 'ha' => 'sh' }, 'string', 2.42, true, false],
+        :invalid => ['string', %w(array), { 'ha' => 'sh' }, 2.42, true, false, nil],
         :message => 'is not an integer',
       },
       'string_or_array' => {

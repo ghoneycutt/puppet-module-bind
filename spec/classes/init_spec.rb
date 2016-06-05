@@ -171,9 +171,17 @@ describe 'bind' do
       })
     end
 
-    it { should have_bind__channel_resource_count(1) } # bind::channel is called because use_default_logging_channel = true
+    # two bind::channel resources are valid:
+    # use_default_logging_channel = true
+    # hiera example data
+    it { should contain_bind__channel('default_syslog') }
+    it { should contain_bind__channel('from_hiera_common') }
+    it { should have_bind__channel_resource_count(2) }
     it { should have_bind__acl_resource_count(0) }
-    it { should have_bind__key_resource_count(1) }     # bind::key is called once 'rndc-key'
+    it { should contain_bind__key('rndc-key') }
+    # one bind::key resource is valid:
+    # bind::key is called once as 'rndc-key'
+    it { should have_bind__key_resource_count(1) }
     it { should have_bind__masters_resource_count(0) }
     it { should have_bind__view_resource_count(0) }
     it { should have_bind__zone_resource_count(0) }
@@ -355,6 +363,120 @@ describe 'bind' do
     let(:params) { { :type => 'slave' } }
 
     it { should contain_file('named_conf').with_content(/^options \{(\n.*)*^\s*check-names slave ignore;(\n.*)*\};/) }
+  end
+
+  context 'with default_logging_channel set to valid string <default_debug>' do
+    let(:params) { { :default_logging_channel => 'default_debug' } }
+
+    it { should contain_bind__channel('default_debug') }
+  end
+
+  context 'with use_default_logging_channel set to valid bool <false>' do
+    let(:params) { { :use_default_logging_channel => false } }
+
+    # one bind::channel resources is valid because of hiera example data
+    it { should contain_bind__channel('from_hiera_common') }
+    it { should have_bind__channel_resource_count(1) }
+  end
+
+  channels = {
+    'default'         => { :category => 'default', },
+    'general'         => { :category => 'general', },
+    'config'          => { :category => 'config', },
+    'client'          => { :category => 'client', },
+    'database'        => { :category => 'database', },
+    'network'         => { :category => 'network', },
+    'notify'          => { :category => 'notify', },
+    'queries'         => { :category => 'queries', },
+    'security'        => { :category => 'security', },
+    'resolver'        => { :category => 'resolver', },
+    'update'          => { :category => 'update', },
+    'update_security' => { :category => 'update-security', },
+    'xfer_in'         => { :category => 'xfer-in', },
+    'xfer_out'        => { :category => 'xfer-out', },
+  }
+
+  channels.each do |channel, v|
+    context "with enable_logging_category_#{channel} set to valid bool <true>" do
+      let(:params) { { :"enable_logging_category_#{channel}" => true } }
+
+      it { should contain_file('named_conf').with_content(/^logging \{(\n.*)*^\s*category #{v[:category]} \{ default_syslog; \};(\n.*)*\};/) }
+    end
+
+    context "with logging_category_#{channel}_channels set to valid array [default_debug, default_stderr]" do
+      let(:params) do
+        {
+          :"logging_category_#{channel}_channels" => %w(default_debug default_stderr),
+          :"enable_logging_category_#{channel}"   => true, # to activate functionality
+        }
+      end
+
+      it { should contain_file('named_conf').with_content(/^logging \{(\n.*)*^\s*category #{v[:category]} \{ default_debug; default_stderr; \};(\n.*)*\};/) }
+    end
+  end
+
+  context 'with dump_file set to valid string </other/dump>' do
+    let(:params) { { :dump_file => '/other/dump' } }
+
+    it { should contain_file('named_conf').with_content(%r{^options \{(\n.*)*^\s*dump-file "/other/dump";(\n.*)*\};}) }
+  end
+
+  context 'with channels_dir set to valid string </other/path>' do
+    let(:params) { { :channels_dir => '/other/path' } }
+
+    it { should contain_file('named.channels.d').with_path('/other/path') }
+  end
+
+  context 'with channels_list set to valid string </other/path>' do
+    let(:params) { { :channels_list => '/other/path' } }
+
+    it { should contain_concat_file('/other/path') }
+  end
+
+  context 'with channels_list set to valid string </other/path>' do
+    let(:params) { { :channels_list => '/other/path' } }
+
+    it { should contain_concat_file('/other/path') }
+  end
+
+  context 'with channels set to valid hash' do
+    let(:facts) { { :fqdn => 'hiera-channels.example.local' } }
+
+    context 'when channels_hiera_merge is <true> (default value)' do
+      let(:params) do
+        {
+          :channels => {
+            'fromhash' => {
+              'type' => 'file',
+              'file' => 'satisfy bind::channel',
+            },
+          },
+          :channels_hiera_merge => true,
+        }
+      end
+
+      it { should_not contain_bind__channel('fromhash') }
+      it { should contain_bind__channel('from_hiera_common') }
+      it { should contain_bind__channel('from_hiera_fqdn') }
+    end
+
+    context 'when channels_hiera_merge is <false>' do
+      let(:params) do
+        {
+          :channels => {
+            'fromhash' => {
+              'type' => 'file',
+              'file' => 'satisfy bind::channel',
+            },
+          },
+          :channels_hiera_merge => false,
+        }
+      end
+
+      it { should contain_bind__channel('fromhash') }
+      it { should_not contain_bind__channel('from_hiera_common') }
+      it { should_not contain_bind__channel('from_hiera_fqdn') }
+    end
   end
 
   describe 'variable type and content validations' do

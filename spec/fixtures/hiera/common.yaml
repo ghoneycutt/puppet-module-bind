@@ -1,5 +1,0 @@
----
-bind::channels:
-  'from_hiera_common':
-    'type': 'file'
-    'file': 'satisfy bind::channel'

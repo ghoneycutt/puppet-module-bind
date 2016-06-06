@@ -1,0 +1,28 @@
+---
+bind::channels:
+  'from_hiera_parameter':
+    'type': 'file'
+    'file': 'satisfy bind::channel'
+
+bind::acls:
+  'from_hiera_parameter':
+    'keys':
+      - 'satisfy bind::acl'
+
+bind::keys:
+  'from_hiera_parameter':
+    'secret': 'satisfy bind::key'
+
+bind::masters:
+  'from_hiera_parameter':
+    'entries':
+      'satisfy': 'bind::key'
+
+bind::views:
+  'from_hiera_parameter':
+    'match_clients': 'none'
+
+bind::zones:
+  'from_hiera_parameter':
+    'target': '/satisfy/bind__zones'
+    'type':   'master'

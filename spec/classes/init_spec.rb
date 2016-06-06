@@ -171,16 +171,13 @@ describe 'bind' do
       })
     end
 
-    # two bind::channel resources are valid:
-    # use_default_logging_channel = true
-    # hiera example data
+
+    # one resourcec for use_default_logging_channel defaulting to true
     it { should contain_bind__channel('default_syslog') }
-    it { should contain_bind__channel('from_hiera_common') }
-    it { should have_bind__channel_resource_count(2) }
+    it { should have_bind__channel_resource_count(1) }
     it { should have_bind__acl_resource_count(0) }
+    # one resource for calling bind::key in the code
     it { should contain_bind__key('rndc-key') }
-    # one bind::key resource is valid:
-    # bind::key is called once as 'rndc-key'
     it { should have_bind__key_resource_count(1) }
     it { should have_bind__masters_resource_count(0) }
     it { should have_bind__view_resource_count(0) }
@@ -374,9 +371,7 @@ describe 'bind' do
   context 'with use_default_logging_channel set to valid bool <false>' do
     let(:params) { { :use_default_logging_channel => false } }
 
-    # one bind::channel resources is valid because of hiera example data
-    it { should contain_bind__channel('from_hiera_common') }
-    it { should have_bind__channel_resource_count(1) }
+    it { should have_bind__channel_resource_count(0) }
   end
 
   channels = {
@@ -433,20 +428,19 @@ describe 'bind' do
     it { should contain_concat_file('/other/path') }
   end
 
-  context 'with channels_list set to valid string </other/path>' do
-    let(:params) { { :channels_list => '/other/path' } }
-
-    it { should contain_concat_file('/other/path') }
-  end
-
   context 'with channels set to valid hash' do
-    let(:facts) { { :fqdn => 'hiera-channels.example.local' } }
+    let(:facts) do
+      {
+        :fqdn      => 'hiera-merge.example.local',
+        :parameter => 'hiera-mergers',
+      }
+    end
 
     context 'when channels_hiera_merge is <true> (default value)' do
       let(:params) do
         {
           :channels => {
-            'fromhash' => {
+            'fromparams' => {
               'type' => 'file',
               'file' => 'satisfy bind::channel',
             },
@@ -455,8 +449,8 @@ describe 'bind' do
         }
       end
 
-      it { should_not contain_bind__channel('fromhash') }
-      it { should contain_bind__channel('from_hiera_common') }
+      it { should_not contain_bind__channel('fromparams') }
+      it { should contain_bind__channel('from_hiera_parameter') }
       it { should contain_bind__channel('from_hiera_fqdn') }
     end
 
@@ -464,7 +458,7 @@ describe 'bind' do
       let(:params) do
         {
           :channels => {
-            'fromhash' => {
+            'fromparams' => {
               'type' => 'file',
               'file' => 'satisfy bind::channel',
             },
@@ -473,9 +467,341 @@ describe 'bind' do
         }
       end
 
-      it { should contain_bind__channel('fromhash') }
-      it { should_not contain_bind__channel('from_hiera_common') }
+      it { should contain_bind__channel('fromparams') }
+      it { should_not contain_bind__channel('from_hiera_parameter') }
       it { should_not contain_bind__channel('from_hiera_fqdn') }
+    end
+  end
+
+  context 'with acls_dir set to valid string </other/path>' do
+    let(:params) { { :acls_dir => '/other/path' } }
+
+    it { should contain_file('named.acls.d').with_path('/other/path') }
+  end
+
+  context 'with acls_list set to valid string </other/path>' do
+    let(:params) { { :acls_list => '/other/path' } }
+
+    it { should contain_concat_file('/other/path') }
+  end
+
+  context 'with acls set to valid hash' do
+    let(:facts) do
+      {
+        :fqdn      => 'hiera-merge.example.local',
+        :parameter => 'hiera-mergers',
+      }
+    end
+
+    context 'when acls_hiera_merge is <true> (default value)' do
+      let(:params) do
+        {
+          :acls => {
+            'fromparams' => {
+              'keys' => ['satisfy bind::acl'],
+            },
+          },
+          :acls_hiera_merge => true,
+        }
+      end
+
+      it { should_not contain_bind__acl('fromparams') }
+      it { should contain_bind__acl('from_hiera_parameter') }
+      it { should contain_bind__acl('from_hiera_fqdn') }
+    end
+
+    context 'when acls_hiera_merge is <false>' do
+      let(:params) do
+        {
+          :acls => {
+            'fromparams' => {
+              'keys' => ['satisfy bind::acl'],
+            },
+          },
+          :acls_hiera_merge => false,
+        }
+      end
+
+      it { should contain_bind__acl('fromparams') }
+      it { should_not contain_bind__acl('from_hiera_parameter') }
+      it { should_not contain_bind__acl('from_hiera_fqdn') }
+    end
+  end
+
+  context 'with controls set to valid hash </other/path>' do
+    let(:params) do
+      {
+        :controls => {
+          '*' => {
+            'port'   => '953',
+            'allows' => %w(127.0.0.1 127.0.0.2),
+            'keys'   => %w(key1 key2),
+          }
+        }
+      }
+    end
+
+    controls_content = <<-END.gsub(/^\s+\|/, '')
+      |# This file is being maintained by Puppet.
+      |# DO NOT EDIT
+      |
+      |options {
+      |  version "not so easy";
+      |  notify no;
+      |  recursion no;
+      |  zone-statistics yes;
+      |  allow-query { any; };
+      |  allow-transfer { none; };
+      |  cleaning-interval 1440;
+      |  check-names master ignore;
+      |  listen-on port 53 { any; };
+      |  dnssec-enable no;
+      |  dnssec-validation no;
+      |  directory "/var/named";
+      |  dump-file "/var/named/data/cache_dump.db";
+      |  statistics-file "/var/named/data/named_stats.txt";
+      |  memstatistics-file "/var/named/data/named_mem_stats.txt";
+      |};
+      |
+      |include "/etc/named/acls";
+      |
+      |include "/etc/named/masters";
+      |
+      |include "/etc/named/keys";
+      |
+      |controls {
+      |  inet * port 953 allow { 127.0.0.1; 127.0.0.2; } keys { "key1"; "key2"; };
+      |};
+      |
+      |include "/etc/named/views";
+      |
+      |logging {
+      |
+      |  include "/etc/named/channels";
+      |
+      |};
+    END
+
+    it { should contain_file('named_conf').with_content(controls_content) }
+  end
+
+  context 'with keys set to valid hash' do
+    let(:facts) do
+      {
+        :fqdn      => 'hiera-merge.example.local',
+        :parameter => 'hiera-mergers',
+      }
+    end
+
+    context 'when keys_hiera_merge is <true> (default value)' do
+      let(:params) do
+        {
+          :keys => {
+            'fromparams' => {
+              'secret'   => 'satisfy bind::key',
+            },
+          },
+          :keys_hiera_merge => true,
+        }
+      end
+
+      it { should_not contain_bind__key('fromparams') }
+      it { should contain_bind__key('from_hiera_parameter') }
+      it { should contain_bind__key('from_hiera_fqdn') }
+    end
+
+    context 'when keys_hiera_merge is <false>' do
+      let(:params) do
+        {
+          :keys => {
+            'fromparams' => {
+              'secret'   => 'satisfy bind::key',
+            },
+          },
+          :keys_hiera_merge => false,
+        }
+      end
+
+      it { should contain_bind__key('fromparams') }
+      it { should_not contain_bind__key('from_hiera_parameter') }
+      it { should_not contain_bind__key('from_hiera_fqdn') }
+    end
+  end
+
+  context 'with keys_list set to valid string </other/path>' do
+    let(:params) { { :keys_list => '/other/path' } }
+
+    it { should contain_concat_file('/other/path') }
+  end
+
+  context 'with masters_dir set to valid string </other/path>' do
+    let(:params) { { :masters_dir => '/other/path' } }
+
+    it { should contain_file('named.masters.d').with_path('/other/path') }
+  end
+
+  context 'with masters_list set to valid string </other/path>' do
+    let(:params) { { :masters_list => '/other/path' } }
+
+    it { should contain_concat_file('/other/path') }
+  end
+
+  context 'with masters set to valid hash' do
+    let(:facts) do
+      {
+        :fqdn      => 'hiera-merge.example.local',
+        :parameter => 'hiera-mergers',
+      }
+    end
+
+    context 'when masters_hiera_merge is <true> (default value)' do
+      let(:params) do
+        {
+          :masters => {
+            'fromparams' => {
+              'entries' => {
+                'satisfy' => 'bind::master',
+              },
+            },
+          },
+          :masters_hiera_merge => true,
+        }
+      end
+
+      it { should_not contain_bind__masters('fromparams') }
+      it { should contain_bind__masters('from_hiera_parameter') }
+      it { should contain_bind__masters('from_hiera_fqdn') }
+    end
+
+    context 'when masters_hiera_merge is <false>' do
+      let(:params) do
+        {
+          :masters => {
+            'fromparams' => {
+              'entries' => {
+                'satisfy' => 'bind::master',
+              },
+            },
+          },
+          :masters_hiera_merge => false,
+        }
+      end
+
+      it { should contain_bind__masters('fromparams') }
+      it { should_not contain_bind__masters('from_hiera_parameter') }
+      it { should_not contain_bind__masters('from_hiera_fqdn') }
+    end
+  end
+
+  context 'with views_dir set to valid string </other/path>' do
+    let(:params) { { :views_dir => '/other/path' } }
+
+    it { should contain_file('named.views.d').with_path('/other/path') }
+  end
+
+  context 'with views_list set to valid string </other/path>' do
+    let(:params) { { :views_list => '/other/path' } }
+
+    it { should contain_concat_file('/other/path') }
+  end
+
+  context 'with views set to valid hash' do
+    let(:facts) do
+      {
+        :fqdn      => 'hiera-merge.example.local',
+        :parameter => 'hiera-mergers',
+      }
+    end
+
+    context 'when views_hiera_merge is <true> (default value)' do
+      let(:params) do
+        {
+          :views => {
+            'fromparams' => {
+              'match_clients' => 'none',
+            },
+          },
+          :views_hiera_merge => true,
+        }
+      end
+
+      it { should_not contain_bind__view('fromparams') }
+      it { should contain_bind__view('from_hiera_parameter') }
+      it { should contain_bind__view('from_hiera_fqdn') }
+    end
+
+    context 'when views_hiera_merge is <false>' do
+      let(:params) do
+        {
+          :views => {
+            'fromparams' => {
+              'match_clients' => 'none',
+            },
+          },
+          :views_hiera_merge => false,
+        }
+      end
+
+      it { should contain_bind__view('fromparams') }
+      it { should_not contain_bind__view('from_hiera_parameter') }
+      it { should_not contain_bind__view('from_hiera_fqdn') }
+    end
+  end
+
+  context 'with zones_dir set to valid string </other/path>' do
+    let(:params) { { :zones_dir => '/other/path' } }
+
+    it { should contain_file('named.zones.d').with_path('/other/path') }
+  end
+
+  context 'with zone_lists_dir set to valid string </other/path>' do
+    let(:params) { { :zone_lists_dir => '/other/path' } }
+
+    it { should contain_file('named.zone_lists').with_path('/other/path') }
+  end
+
+  context 'with zones set to valid hash' do
+    let(:facts) do
+      {
+        :fqdn      => 'hiera-merge.example.local',
+        :parameter => 'hiera-mergers',
+      }
+    end
+
+    context 'when zones_hiera_merge is <true> (default value)' do
+      let(:params) do
+        {
+          :zones => {
+            'fromparams' => {
+              'target' => '/satisfy/bind__zones',
+              'type'   => 'master',
+            },
+          },
+          :zones_hiera_merge => true,
+        }
+      end
+
+      it { should_not contain_bind__zone('fromparams') }
+      it { should contain_bind__zone('from_hiera_parameter') }
+      it { should contain_bind__zone('from_hiera_fqdn') }
+    end
+
+    context 'when zones_hiera_merge is <false>' do
+      let(:params) do
+        {
+          :zones => {
+            'fromparams' => {
+              'target' => '/satisfy/bind__zones',
+              'type'   => 'master',
+            },
+          },
+          :zones_hiera_merge => false,
+        }
+      end
+
+      it { should contain_bind__zone('fromparams') }
+      it { should_not contain_bind__zone('from_hiera_parameter') }
+      it { should_not contain_bind__zone('from_hiera_fqdn') }
     end
   end
 

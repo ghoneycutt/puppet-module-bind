@@ -1,0 +1,28 @@
+---
+bind::channels:
+  'from_hiera_fqdn':
+    'type': 'file'
+    'file': 'satisfy bind::channel'
+
+bind::acls:
+  'from_hiera_fqdn':
+    'keys':
+      - 'satisfy bind::acl'
+
+bind::keys:
+  'from_hiera_fqdn':
+    'secret': 'satisfy bind::key'
+
+bind::masters:
+  'from_hiera_fqdn':
+    'entries':
+      'satisfy': 'bind::key'
+
+bind::views:
+  'from_hiera_fqdn':
+    'match_clients': 'none'
+
+bind::zones:
+  'from_hiera_fqdn':
+    'target': '/satisfy/bind__zones'
+    'type':   'master'

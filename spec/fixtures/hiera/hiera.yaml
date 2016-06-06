@@ -5,4 +5,4 @@
   :datadir: 'spec/fixtures/hiera'
 :hierarchy:
   - fqdn/%{fqdn}
-  - common
+  - parameter/%{parameter}

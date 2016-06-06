@@ -62,7 +62,6 @@ class bind (
   $channels_list                             = '/etc/named/channels',
   $channels                                  = undef,
   $channels_hiera_merge                      = true,
-  $slave_dir                                 = '/var/named/slaves',
   $acls_dir                                  = '/etc/named/acls.d',
   $acls_list                                 = '/etc/named/acls',
   $acls                                      = undef,

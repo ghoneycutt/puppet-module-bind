@@ -9,7 +9,6 @@ env:
   matrix:
     - PUPPET_GEM_VERSION="~> 3.8.0"
     - PUPPET_GEM_VERSION="~> 3" FUTURE_PARSER="yes"
-    - PUPPET_GEM_VERSION="~> 4"
     - PUPPET_GEM_VERSION="~> 4" STRICT_VARIABLES="yes"
 
 sudo: false
@@ -19,8 +18,6 @@ script: 'bundle exec rake validate && bundle exec rake lint && SPEC_OPTS="--form
 matrix:
   fast_finish: true
   exclude:
-    - rvm: 1.8.7
-      env: PUPPET_GEM_VERSION="~> 4"
     - rvm: 1.8.7
       env: PUPPET_GEM_VERSION="~> 4" STRICT_VARIABLES="yes"
 

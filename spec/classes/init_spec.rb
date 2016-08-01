@@ -810,6 +810,7 @@ describe 'bind' do
     let(:facts) do
       {
         :osfamily => 'RedHat',
+        :operatingsystem => 'RedHat',
       }
     end
     # /!\ template does not support $include = undef

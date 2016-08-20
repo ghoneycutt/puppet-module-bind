@@ -14,6 +14,7 @@ class bind (
   $version                                   = 'not so easy',
   $notify_option                             = 'no',
   $recursion                                 = 'no',
+  $forwarders                                = undef,
   $zone_statistics                           = 'yes',
   $allow_query                               = 'any',
   $allow_transfer                            = 'none',

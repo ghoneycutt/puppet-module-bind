@@ -165,13 +165,16 @@ class bind (
     validate_hash($controls)
   }
 
-
   if $channels != undef {
     validate_hash($channels)
   }
 
   if $acls != undef {
     validate_hash($acls)
+  }
+
+  if $forwarders != undef {
+    validate_array($forwarders)
   }
 
   if $keys != undef {

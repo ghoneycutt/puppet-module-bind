@@ -278,6 +278,18 @@ describe 'bind' do
     it { should contain_file('named_conf').with_content(/^options \{(\n.*)*^\s*recursion yes;(\n.*)*\};/) }
   end
 
+  context 'with forwarders set to valid array [10.0.0.242]' do
+    let(:params) { { :forwarders => %w(10.0.0.242) } }
+
+    it { should contain_file('named_conf').with_content(/^  forwarders { 10.0.0.242; };/) }
+  end
+
+  context 'with forwarders set to valid array [10.0.0.3 10.0.0.242]' do
+    let(:params) { { :forwarders => %w(10.0.0.3 10.0.0.242) } }
+
+    it { should contain_file('named_conf').with_content(/^  forwarders { 10.0.0.3; 10.0.0.242; };/) }
+  end
+
   context 'with zone_statistics set to valid string <no>' do
     let(:params) { { :zone_statistics => 'no' } }
 
@@ -835,7 +847,7 @@ describe 'bind' do
                        logging_category_client_channels logging_category_database_channels logging_category_network_channels
                        logging_category_notify_channels logging_category_queries_channels logging_category_security_channels
                        logging_category_resolver_channels logging_category_update_channels logging_category_update_security_channels
-                       logging_category_xfer_in_channels logging_category_xfer_out_channels),
+                       logging_category_xfer_in_channels logging_category_xfer_out_channels forwarders),
         :valid   => [%w(ar ray)],
         :invalid => ['string', { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => 'is not an Array',

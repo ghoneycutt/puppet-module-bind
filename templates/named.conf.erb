@@ -17,6 +17,9 @@ options {
   dump-file "<%= @dump_file %>";
   statistics-file "<%= @statistics_file %>";
   memstatistics-file "<%= @memstatistics_file %>";
+  <%- if not @forwarders.nil? -%>
+  forwarders { <%= @forwarders.join('; ') -%>; };
+  <%- end -%>
 };
 
 include "<%= @acls_list %>";

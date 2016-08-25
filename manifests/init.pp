@@ -14,6 +14,7 @@ class bind (
   $version                                   = 'not so easy',
   $notify_option                             = 'no',
   $recursion                                 = 'no',
+  $forwarders                                = undef,
   $zone_statistics                           = 'yes',
   $allow_query                               = 'any',
   $allow_transfer                            = 'none',
@@ -164,13 +165,16 @@ class bind (
     validate_hash($controls)
   }
 
-
   if $channels != undef {
     validate_hash($channels)
   }
 
   if $acls != undef {
     validate_hash($acls)
+  }
+
+  if $forwarders != undef {
+    validate_array($forwarders)
   }
 
   if $keys != undef {

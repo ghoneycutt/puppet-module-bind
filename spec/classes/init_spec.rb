@@ -1,5 +1,8 @@
 require 'spec_helper'
 describe 'bind' do
+  let(:facts) { mandatory_facts }
+  let(:params) { mandatory_params }
+
   concats = {
     '/etc/named/channels' => { :tag => 'bind_channel', },
     '/etc/named/acls'     => { :tag => 'bind_acl', },
@@ -818,20 +821,7 @@ describe 'bind' do
   end
 
   describe 'variable type and content validations' do
-    # set needed custom facts and variables
-    let(:facts) do
-      {
-        :osfamily => 'RedHat',
-        :operatingsystem => 'RedHat',
-      }
-    end
-    # /!\ template does not support $include = undef
-    # workaround is to set $include to an empty array
-    let(:mandatory_params) do
-      {
-        #:param => 'value',
-      }
-    end
+    let(:facts) { mandatory_facts }
 
     validations = {
       'absolute_path' => {

@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe 'bind::channel' do
   let(:title) { 'rspec' }
+  let(:facts) { mandatory_facts }
+  let(:params) { mandatory_params }
 
   # $type is mandatory (nothing set)
   context 'with defaults for all parameters' do
@@ -204,16 +206,11 @@ describe 'bind::channel' do
   end
 
   describe 'variable type and content validations' do
-    # set needed custom facts and variables
-    let(:facts) do
-      {
-        #:fact => 'value',
-      }
-    end
+    let(:facts) { mandatory_facts }
     let(:mandatory_params) do
       {
-        :type => 'file',
         :file => '/absolute/path',
+        :type => 'file',
       }
     end
 
@@ -224,7 +221,6 @@ describe 'bind::channel' do
         :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => 'bind::channel::rspec::type is <.*>\. Valid values are',
       },
-      # enhancement: validate valid values for severity & syslog_facility
       'string' => {
         :name    => %w(file severity syslog_facility),
         :valid   => ['string'],

@@ -821,7 +821,7 @@ describe 'bind' do
   end
 
   describe 'variable type and content validations' do
-    let(:facts) { mandatory_facts }
+    let(:facts) { [mandatory_facts, { :osfamily => 'RedHat', }].reduce(:merge) }
 
     validations = {
       'absolute_path' => {

@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe 'bind::key' do
   let(:title) { 'rspec' }
+  let(:facts) { mandatory_facts }
+  let(:params) { mandatory_params }
 
   # $secret is mandatory (nothing set)
   context 'with defaults for all parameters' do
@@ -129,20 +131,10 @@ describe 'bind::key' do
   end
 
   describe 'variable type and content validations' do
-    # set needed custom facts and variables
-    let(:facts) do
-      {
-        #:fact => 'value',
-      }
-    end
-    let(:mandatory_params) do
-      {
-        :secret => 'geheim',
-      }
-    end
+    let(:facts) { mandatory_facts }
+    let(:mandatory_params) { { :secret => 'geheim' } }
 
     validations = {
-      # enhancement: validate valid values for algorithm
       'absolute_path' => {
         :name    => %w(path),
         :valid   => ['/absolute/filepath', '/absolute/directory/'],

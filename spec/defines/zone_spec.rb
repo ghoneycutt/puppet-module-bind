@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe 'bind::zone' do
   let(:title) { 'rspec' }
+  let(:facts) { mandatory_facts }
+  let(:params) { mandatory_params }
   # realize virtual resources to allow spec testing them
   let :pre_condition do
     'Concat_fragment <| |>'
@@ -206,12 +208,7 @@ describe 'bind::zone' do
   end
 
   describe 'variable type and content validations' do
-    # set needed custom facts and variables
-    let(:facts) do
-      {
-        #:fact => 'value',
-      }
-    end
+    let(:facts) { mandatory_facts }
     let(:mandatory_params) do
       {
         :target => '/absolute/path',
@@ -220,24 +217,24 @@ describe 'bind::zone' do
     end
 
     validations = {
-      'regex for type' => {
-        :name    => %w(type),
-        :valid   => %w(master slave),
-        :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
-        :message => "bind::zone::rspec::type is <.*> and must be 'master' or 'slave'\.",
-        :params  => { :masters => 'master-spectest' },
-      },
       'absolute_path' => {
         :name    => %w(target extra_path),
         :valid   => ['/absolute/filepath', '/absolute/directory/'],
         :invalid => ['../invalid', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => 'is not an absolute path',
       },
+      'regex for type' => {
+        :name    => %w(type),
+        :params  => {:masters => 'master-spectest'},
+        :valid   => %w(master slave),
+        :invalid => ['string', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
+        :message => "bind::zone::rspec::type is <.*> and must be 'master' or 'slave'\.",
+      },
       'string' => {
         :name    => %w(tag masters),
         :valid   => ['string'],
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
-        :message => 'is not a string',
+        :message => '(is not a string|Invalid tag)',
       },
       'hash' => {
         :name    => %w(update_policies),

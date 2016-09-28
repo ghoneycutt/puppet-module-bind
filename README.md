@@ -21,6 +21,10 @@ bind9 while not managing the data in the actual zones, which is up to you.
 Recommend keeping zone data in another repo and having a process sync that data
 to your bind masters.
 
+Since the bind configuration language is so rich, the approach taken has
+been to turn clauses such as zone and view into defined types and make
+heavy use of concat fragments.
+
 # Compatibility
 
 This module is built for use with Puppet v3 (with and without the future
@@ -36,7 +40,10 @@ parser) and Puppet v4 on the following platforms and supports Ruby versions
 
 ### Description
 
-/!\ TODO: need description
+The bind class manages the software, its configuration and service. All
+defined types can be called directly through the bind class by passing
+their options as hashes, which is explained for each type. To use,
+simply `include ::bind`.
 
 ### Parameters
 
@@ -118,6 +125,12 @@ Value of `notify` option in named.conf.
 Value of `recursion` option in named.conf.
 
 - *Default*: 'no'
+
+---
+#### forwarders (type: Array)
+Value of `forwarders` option in named.conf.
+
+- *Default*: undef
 
 ---
 #### zone_statistics (type: String)
@@ -702,7 +715,7 @@ value is the name of a key.
 
 ### Description
 
-/!\ TODO add descriptionm
+Manage a bind view clause.
 
 ### Example
 ```yaml
@@ -759,7 +772,7 @@ Valid values are 'yes' and 'no'.
 
 ### Description
 
-/!\ TODO add description
+Manage a bind zone clause.
 
 ##### Example:
 ```yaml

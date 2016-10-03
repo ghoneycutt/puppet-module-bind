@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe 'bind::masters' do
   let(:title) { 'rspec' }
+  let(:facts) { mandatory_facts }
+  let(:params) { mandatory_params }
 
   # $secret is mandatory (nothing set)
   context 'with defaults for all parameters' do
@@ -56,17 +58,7 @@ describe 'bind::masters' do
   end
 
   describe 'variable type and content validations' do
-    # set needed custom facts and variables
-    let(:facts) do
-      {
-        #:fact => 'value',
-      }
-    end
-    let(:mandatory_params) do
-      {
-        #:param => 'value',
-      }
-    end
+    let(:facts) { mandatory_facts }
 
     validations = {
       'hash' => {

@@ -11,3 +11,13 @@ RSpec.configure do |config|
     Facter.clear_messages
   end
 end
+
+def mandatory_facts
+  {
+    :parameter => nil,
+  }
+end
+
+def mandatory_params
+  {}
+end

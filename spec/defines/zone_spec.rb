@@ -50,6 +50,7 @@ describe 'bind::zone' do
         'owner'   => 'named',
         'group'   => 'named',
         'mode'    => '0640',
+        'before'  => 'File[named_conf]',
         'require' => ['Package[bind]','Common::Mkdir_p[/etc/named/zones.d/internal]'],
       })
     end

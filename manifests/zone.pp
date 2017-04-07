@@ -85,6 +85,7 @@ define bind::zone (
     owner   => $::bind::user,
     group   => $::bind::group,
     mode    => '0640',
+    before  => File['named_conf'],
     require => [
       Package['bind'],
       Common::Mkdir_p[$zones_dir],

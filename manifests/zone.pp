@@ -90,6 +90,7 @@ define bind::zone (
       Package['bind'],
       Common::Mkdir_p[$zones_dir],
     ],
+    notify => Service['named'],
   }
 
   @concat_fragment { "bind::zone::${name}":

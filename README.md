@@ -791,6 +791,15 @@ bind::zones:
         key: 'key-update-policy-x-example-org'
         rrs:
           - 'CNAME'
+  'bar.example.com':
+    type: 'master'
+    target: '/etc/named/zone_lists/internal.zones'
+    tag: 'internal'
+    extra_path: '/internal'
+    allow_updates:
+      - '10.1.1.0/24'
+      - '10.1.2.3'
+      - 'key name-of-key'
 ```
 ---
 
@@ -837,3 +846,8 @@ used for the grant and is required. Value 'matchtype' maps to the matchtype and
 is required. Value 'rrs' maps to an array of resource records and is optional.
 
 - *Default*: undef
+
+---
+#### allow_update (type: Array)
+Values for allow-update declaration within the zone declaration. This is
+mutually exclusive with update_policies.

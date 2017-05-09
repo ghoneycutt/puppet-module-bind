@@ -32,7 +32,8 @@ define bind::zone (
   $extra_path      = undef, # optional extra dir structure - must be absolute, ie '/internal'
   $masters         = undef, # if type is slave, this must be specified, else ignored
   $type            = undef, # master or slave
-  $update_policies = undef,
+  $update_policies = undef, # mutually exclusive with allow_update
+  $allow_update    = undef,
 ) {
 
   include ::bind
@@ -74,6 +75,14 @@ define bind::zone (
     validate_hash($update_policies)
   }
 
+  if $allow_update != undef {
+    validate_array($allow_update)
+  }
+
+  if $allow_update != undef and $update_policies != undef {
+    fail('allow_update and update_policies are mutually exclusive and values for both parameters have been specified.')
+  }
+
   $dir = $type ? {
     'slave'  => 'slaves',
     'master' => 'master',
@@ -85,10 +94,12 @@ define bind::zone (
     owner   => $::bind::user,
     group   => $::bind::group,
     mode    => '0640',
+    before  => File['named_conf'],
     require => [
       Package['bind'],
       Common::Mkdir_p[$zones_dir],
     ],
+    notify  => Service['named'],
   }
 
   @concat_fragment { "bind::zone::${name}":

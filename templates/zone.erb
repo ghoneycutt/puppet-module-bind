@@ -6,7 +6,19 @@ zone "<%= @name %>" {
 <% if @type == 'slave' -%>
   masters { <%= @masters %>; };
 <% end -%>
-  file "<%= @dir %><% if not @extra_path.nil? -%><%= @extra_path%><% end -%>/<%= @name %>";
+<% if not @allow_update.nil? -%>
+<%   au = Array.new -%>
+<%   @allow_update.each do |i| -%>
+<%     if i =~ /^key/ -%>
+<%       # add quotes around name of key -%>
+<%       au << "key \"#{i.split[1]}\"" -%>
+<%     else -%>
+<%       au << i -%>
+<%     end -%>
+<%   end -%>
+  allow-update { <%= au.join('; ') %>; };
+<% end -%>
+  file "<%= @dir %><% if not @extra_path.nil? -%><%= @extra_path %><% end -%>/<%= @name %>";
 <% if not @update_policies.nil? -%>
 
   update-policy

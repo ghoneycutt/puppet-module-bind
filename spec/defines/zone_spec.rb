@@ -50,6 +50,7 @@ describe 'bind::zone' do
         'owner'   => 'named',
         'group'   => 'named',
         'mode'    => '0640',
+        'before'  => 'File[named_conf]',
         'require' => ['Package[bind]','Common::Mkdir_p[/etc/named/zones.d/internal]'],
       })
     end
@@ -207,6 +208,93 @@ describe 'bind::zone' do
     it { should contain_file('/etc/named/zones.d/rspec').with_content(content) }
   end
 
+  context 'with mutually exclusive parameters update_policies and allow_update both set' do
+    let(:params) do
+      {
+        :target          => '/etc/named/zone_lists/internal.zones',
+        :tag             => 'internal',
+        :extra_path      => '/internal',
+        :masters         => 'master-internal',
+        :type            => 'slave',
+        :allow_update    => ['10.1.2.3'],
+        :update_policies => {
+          'bar.example.net' => {
+            'matchtype' => 'subdomain',
+            'key' => 'key-internal',
+          },
+        },
+      }
+    end
+
+    it 'should fail' do
+      expect { should contain_class(subject) }.to raise_error(Puppet::Error, /allow_update and update_policies are mutually exclusive/)
+    end
+  end
+
+  describe 'with allow_update set' do
+    context 'to an array with one element' do
+      let(:params) do
+        {
+          :target       => '/etc/named/zone_lists/internal.zones',
+          :tag          => 'internal',
+          :extra_path   => '/internal',
+          :masters      => 'master-internal',
+          :type         => 'slave',
+          :allow_update => ['10.1.2.3'],
+        }
+      end
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |zone "rspec" {
+        |  type slave;
+        |  masters { master-internal; };
+        |  allow-update { 10.1.2.3; };
+        |  file "slaves/internal/rspec";
+        |};
+      END
+
+      it do
+        should contain_file('/etc/named/zones.d/internal/rspec').with({
+          'content' => content,
+        })
+      end
+    end
+
+    context 'to an array of multiple elements' do
+      let(:params) do
+        {
+          :target       => '/etc/named/zone_lists/internal.zones',
+          :tag          => 'internal',
+          :extra_path   => '/internal',
+          :masters      => 'master-internal',
+          :type         => 'slave',
+          :allow_update => ['10.1.2.3', '10.1.1.0/24', 'key my-key-name'],
+        }
+      end
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |zone "rspec" {
+        |  type slave;
+        |  masters { master-internal; };
+        |  allow-update { 10.1.2.3; 10.1.1.0/24; key "my-key-name"; };
+        |  file "slaves/internal/rspec";
+        |};
+      END
+
+      it do
+        should contain_file('/etc/named/zones.d/internal/rspec').with({
+          'content' => content,
+        })
+      end
+    end
+  end
+
   describe 'variable type and content validations' do
     let(:facts) { mandatory_facts }
     let(:mandatory_params) do
@@ -222,6 +310,12 @@ describe 'bind::zone' do
         :valid   => ['/absolute/filepath', '/absolute/directory/'],
         :invalid => ['../invalid', %w(array), { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
         :message => 'is not an absolute path',
+      },
+      'array' => {
+        :name    => %w(allow_update),
+        :valid   => [%w(ar ray)],
+        :invalid => ['string', { 'ha' => 'sh' }, 3, 2.42, true, false, nil],
+        :message => 'is not an Array',
       },
       'regex for type' => {
         :name    => %w(type),

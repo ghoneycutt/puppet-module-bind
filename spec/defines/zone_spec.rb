@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'bind::zone' do
-  let(:title) { 'rspec' }
+  let(:title) { 'rspec:internal' }
   let(:facts) { mandatory_facts }
   let(:params) { mandatory_params }
   # realize virtual resources to allow spec testing them
@@ -21,7 +21,6 @@ describe 'bind::zone' do
     let(:params) do
       {
         :target     => '/etc/named/zone_lists/internal.zones',
-        :tag        => 'internal',
         :extra_path => '/internal',
         :masters    => 'master-internal',
         :type       => 'slave',
@@ -56,12 +55,39 @@ describe 'bind::zone' do
     end
 
     it do
-      should contain_concat_fragment('bind::zone::rspec').with({
+      should contain_concat_fragment('bind::zone::rspec:internal').with({
         'target'  => '/etc/named/zone_lists/internal.zones',
         'content' => 'include "/etc/named/zones.d/internal/rspec";',
         'tag'     => 'internal',
       })
     end
+  end
+
+  context 'with no tag embedded in the name' do
+    let(:title) { 'rspec' }
+    let(:params) do
+      {
+        :target     => '/etc/named/zone_lists/internal.zones',
+        :extra_path => '/internal',
+        :masters    => 'master-internal',
+        :type       => 'slave',
+      }
+    end
+
+    content = <<-END.gsub(/^\s+\|/, '')
+      |# This file is being maintained by Puppet.
+      |# DO NOT EDIT
+      |
+      |zone "rspec" {
+      |  type slave;
+      |  masters { master-internal; };
+      |  file "slaves/internal/rspec";
+      |};
+    END
+
+    it { should contain_file('/etc/named/zones.d/internal/rspec') }
+
+    it { should contain_concat_fragment('bind::zone::rspec').with_tag('rspec') }
   end
 
   context 'with target set to valid </absolute/path> and mandatories fullfilled' do
@@ -75,22 +101,7 @@ describe 'bind::zone' do
 
     it { should compile.with_all_deps }
     it { should contain_class('bind') }
-    it { should contain_concat_fragment('bind::zone::rspec').with_target('/absolute/path') }
-  end
-
-  context 'with tag set to valid <testing> and mandatories fullfilled' do
-    let(:params) do
-      {
-        :tag    => 'testing',
-        # mandatories
-        :target => '/absolute/path',
-        :type   => 'master',
-      }
-    end
-
-    it { should compile.with_all_deps }
-    it { should contain_class('bind') }
-    it { should contain_concat_fragment('bind::zone::rspec').with_tag('testing') }
+    it { should contain_concat_fragment('bind::zone::rspec:internal').with_target('/absolute/path') }
   end
 
   context 'with extra_path set to valid </SPECtacular> and mandatories fullfilled' do
@@ -212,7 +223,6 @@ describe 'bind::zone' do
     let(:params) do
       {
         :target          => '/etc/named/zone_lists/internal.zones',
-        :tag             => 'internal',
         :extra_path      => '/internal',
         :masters         => 'master-internal',
         :type            => 'slave',
@@ -236,7 +246,6 @@ describe 'bind::zone' do
       let(:params) do
         {
           :target       => '/etc/named/zone_lists/internal.zones',
-          :tag          => 'internal',
           :extra_path   => '/internal',
           :masters      => 'master-internal',
           :type         => 'slave',
@@ -267,7 +276,6 @@ describe 'bind::zone' do
       let(:params) do
         {
           :target       => '/etc/named/zone_lists/internal.zones',
-          :tag          => 'internal',
           :extra_path   => '/internal',
           :masters      => 'master-internal',
           :type         => 'slave',
@@ -325,10 +333,10 @@ describe 'bind::zone' do
         :message => "bind::zone::rspec::type is <.*> and must be 'master' or 'slave'\.",
       },
       'string' => {
-        :name    => %w(tag masters),
+        :name    => %w(masters),
         :valid   => ['string'],
         :invalid => [%w(array), { 'ha' => 'sh' }, 3, 2.42, true, false],
-        :message => '(is not a string|Invalid tag)',
+        :message => '(is not a string)',
       },
       'hash' => {
         :name    => %w(update_policies),

@@ -774,13 +774,56 @@ Valid values are 'yes' and 'no'.
 
 Manage a bind zone clause.
 
-##### Example:
+To allow for the same domain to be specified multiple times though with
+different views, the `$title` may contain the view. This is done in the
+form of `domain:tag`, by specifying the domain, a colon, then the name
+of the tag. If no tag is specified, the tag will be set to the domain.
+This allows you to collect these tags such as in a profile.
+
+##### Example profile manifest
+```puppet
+
+include ::bind
+
+Concat_fragment <| tag == 'internal' |>
+
+concat_file { '/etc/named/zone_lists/internal.zones':
+  tag            => 'internal',
+  ensure_newline => true,
+  owner          => 'root',
+  group          => $::bind::group,
+  mode           => '0640',
+  require        => Package['bind'],
+  before         => File['named_conf'],
+  notify         => Service['named'],
+}
+```
+
+##### Example without view
 ```yaml
 bind::zones:
   'foo.example.com':
     type: 'master'
     target: '/etc/named/zone_lists/internal.zones'
-    tag: 'internal'
+    extra_path: '/internal'
+```
+
+##### Example with view set to 'internal'
+```yaml
+bind::zones:
+  'foo.example.com:internal':
+    type: 'master'
+    target: '/etc/named/zone_lists/internal.zones'
+    extra_path: '/internal'
+```
+
+
+##### Example:
+```yaml
+bind::zones:
+  'foo.example.com:internal':
+    type: 'master'
+    target: '/etc/named/zone_lists/internal.zones'
     extra_path: '/internal'
     update_policies:
       'bar.example.net':
@@ -791,11 +834,18 @@ bind::zones:
         key: 'key-update-policy-x-example-org'
         rrs:
           - 'CNAME'
-  'bar.example.com':
+  'bar.example.com:internal':
     type: 'master'
     target: '/etc/named/zone_lists/internal.zones'
-    tag: 'internal'
     extra_path: '/internal'
+    allow_updates:
+      - '10.1.1.0/24'
+      - '10.1.2.3'
+      - 'key name-of-key'
+  'bar.example.com:external':
+    type: 'master'
+    target: '/etc/named/zone_lists/external.zones'
+    extra_path: '/external'
     allow_updates:
       - '10.1.1.0/24'
       - '10.1.2.3'
@@ -810,12 +860,6 @@ bind::zones:
 Absolute path to zone list file which is the target of concat_fragment.
 
 - *Required*
-
----
-#### tag (type: String)
-Tag to be used with concat_fragment.
-
-- *Default*: $name
 
 ---
 #### extra_path (type: String)

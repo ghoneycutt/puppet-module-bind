@@ -722,7 +722,9 @@ Manage a bind view clause.
 bind::views:
   'corp-internal':
     order: 10
-    match_clients: 'corporate'
+    match_clients:
+      - 'corporate'
+      - 'key key-test'
     recursion: 'yes'
     includes:
       - '/etc/named.rfc1912.zones'
@@ -736,7 +738,7 @@ bind::views:
 ### Parameters
 
 ---
-#### match_clients (type: String)
+#### match_clients (type: String or Array)
 - *Default*: 'any'
 
 ---

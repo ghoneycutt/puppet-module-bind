@@ -796,7 +796,7 @@ bind::zones:
     target: '/etc/named/zone_lists/internal.zones'
     tag: 'internal'
     extra_path: '/internal'
-    allow_updates:
+    allow_update:
       - '10.1.1.0/24'
       - '10.1.2.3'
       - 'key name-of-key'

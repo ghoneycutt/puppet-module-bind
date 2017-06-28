@@ -1,7 +1,7 @@
 # This file is being maintained by Puppet.
 # DO NOT EDIT
 
-zone "<%= @name %>" {
+zone "<%= @zone %>" {
   type <%= @type %>;
 <% if @type == 'slave' -%>
   masters { <%= @masters %>; };
@@ -18,7 +18,7 @@ zone "<%= @name %>" {
 <%   end -%>
   allow-update { <%= au.join('; ') %>; };
 <% end -%>
-  file "<%= @dir %><% if not @extra_path.nil? -%><%= @extra_path %><% end -%>/<%= @name %>";
+  file "<%= @dir %><% if not @extra_path.nil? -%><%= @extra_path %><% end -%>/<%= @zone %>";
 <% if not @update_policies.nil? -%>
 
   update-policy

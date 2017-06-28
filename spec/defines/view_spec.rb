@@ -208,6 +208,73 @@ describe 'bind::view' do
       it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
       it { should contain_concat_fragment('bind::view::rspec') }
     end
+
+    context 'set to valid string with key' do
+      let(:params) { { :match_clients => 'key key-test' } }
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    key "key-test";
+        |  };
+        |};
+      END
+
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
+
+    context 'set to valid array with keys' do
+      let(:params) { { :match_clients => ['key key-test', 'key foo'] } }
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    key "key-test";
+        |    key "foo";
+        |  };
+        |};
+      END
+
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
+
+    context 'set to valid array with mixture of all types' do
+      let(:params) { { :match_clients => ['key key-test', '!key foo', '10.0.0.0/16', '!192.168.1.0/24'] } }
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |view "rspec" {
+        |  match-clients {
+        |    key "key-test";
+        |    !key "foo";
+        |    "10.0.0.0/16";
+        |    !"192.168.1.0/24";
+        |  };
+        |};
+      END
+
+      it { should compile.with_all_deps }
+      it { should contain_class('bind') }
+
+      it { should contain_file('/etc/named/views.d/rspec').with_content(content) }
+      it { should contain_concat_fragment('bind::view::rspec') }
+    end
   end
 
   context 'with recursion set to valid <10.0.0.0/16>' do

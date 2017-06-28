@@ -28,7 +28,6 @@
 #
 define bind::zone (
   $target,
-  $tag             = $name, # tag each zone with its name unless a tag is provided
   $extra_path      = undef, # optional extra dir structure - must be absolute, ie '/internal'
   $masters         = undef, # if type is slave, this must be specified, else ignored
   $type            = undef, # master or slave
@@ -40,28 +39,32 @@ define bind::zone (
 
   validate_absolute_path($target)
 
+  if is_string($name) == false {
+    fail('bind::zone::name is not a string')
+  }
+
+  if $name =~ /:/ {
+    $zone = inline_template("<%= @name.split(':')[0] %>")
+    $ztag  = inline_template("<%= @name.split(':')[1] %>")
+  } else {
+    $zone = $name
+    $ztag  = $name
+  }
+
   if $extra_path != undef {
     validate_absolute_path($extra_path)
     $zones_dir = "${::bind::zones_dir}${extra_path}"
   } else {
     $zones_dir = $::bind::zones_dir
   }
-  $path = "${zones_dir}/${name}"
+  $path = "${zones_dir}/${zone}"
 
   if ! defined(Common::Mkdir_p[$zones_dir]) {
     common::mkdir_p { $zones_dir: }
   }
 
   validate_re($type, '^(master|slave)$',
-    "bind::zone::${name}::type is <${type}> and must be 'master' or 'slave'.")
-
-  if is_string($name) == false {
-    fail('bind::zone::name is not a string')
-  }
-
-  if is_string($tag) == false {
-    fail('bind::zone::tag is not a string')
-  }
+    "bind::zone::${zone}::type is <${type}> and must be 'master' or 'slave'.")
 
   if $type == 'slave' and $masters == undef {
     fail("If type is slave, then masters must be specified. Value for type is <${type}> and masters is <${masters}>.")
@@ -105,6 +108,6 @@ define bind::zone (
   @concat_fragment { "bind::zone::${name}":
     target  => $target,
     content => "include \"${path}\";",
-    tag     => $tag,
+    tag     => $ztag,
   }
 }

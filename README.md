@@ -562,6 +562,13 @@ Absolute path to directory which will contain the zone lists.
 - *Default*: '/etc/named/zone_lists'
 
 ---
+#### sysconfig_options (type: String)
+Options string to be used in OPTIONS line of sysconfig file at
+`/etc/sysconfig/named`.
+
+- *Default*: undef
+
+---
 
 # Define Descriptions
 ## Defined type `bind::acl`

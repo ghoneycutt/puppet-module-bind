@@ -83,6 +83,7 @@ class bind (
   $zones_hiera_merge                         = true,
   $zones                                     = undef,
   $zone_lists_dir                            = '/etc/named/zone_lists',
+  $sysconfig_options                         = undef,
 ) {
 
   validate_string($package)
@@ -193,9 +194,23 @@ class bind (
     validate_hash($zones)
   }
 
+  if $sysconfig_options != undef {
+    validate_string($sysconfig_options)
+  }
+
   package { 'bind':
     ensure => $package_ensure,
     name   => $package,
+  }
+
+  file { '/etc/sysconfig/named':
+    ensure  => 'file',
+    content => template('bind/sysconfig.erb'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    require => Package['bind'],
+    notify  => Service['named'],
   }
 
   bind::key { 'rndc-key':

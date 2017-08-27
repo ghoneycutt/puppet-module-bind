@@ -30,6 +30,65 @@ describe 'bind' do
       })
     end
 
+    named_sysconfig_content = <<-END.gsub(/^\s+\|/, '')
+      |# This file is being maintained by Puppet.
+      |# DO NOT EDIT
+      |#
+      |# BIND named process options
+      |# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |# Currently, you can use the following options:
+      |#
+      |# ROOTDIR="/var/named/chroot"  --  will run named in a chroot environment.
+      |#                            you must set up the chroot environment
+      |#                            (install the bind-chroot package) before
+      |#                            doing this.
+      |#  NOTE:
+      |#         Those directories are automatically mounted to chroot if they are
+      |#         empty in the ROOTDIR directory. It will simplify maintenance of your
+      |#         chroot environment.
+      |#          - /var/named
+      |#          - /etc/pki/dnssec-keys
+      |#          - /etc/named
+      |#          - /usr/lib64/bind or /usr/lib/bind (architecture dependent)
+      |#
+      |#    Those files are mounted as well if target file doesn't exist in
+      |#    chroot.
+      |#          - /etc/named.conf
+      |#          - /etc/rndc.conf
+      |#          - /etc/rndc.key
+      |#          - /etc/named.rfc1912.zones
+      |#          - /etc/named.dnssec.keys
+      |#          - /etc/named.iscdlv.key
+      |#
+      |#  Don't forget to add "$AddUnixListenSocket /var/named/chroot/dev/log"
+      |#  line to your /etc/rsyslog.conf file. Otherwise your logging becomes
+      |#  broken when rsyslogd daemon is restarted (due update, for example).
+      |#
+      |# OPTIONS="whatever"     --  These additional options will be passed to named
+      |#                            at startup. Don't add -t here, use ROOTDIR instead.
+      |#
+      |# KEYTAB_FILE="/dir/file"    --  Specify named service keytab file (for GSS-TSIG)
+      |#
+      |# DISABLE_ZONE_CHECKING  -- By default, initscript calls named-checkzone
+      |#          utility for every zone to ensure all zones are
+      |#          valid before named starts. If you set this option
+      |#          to 'yes' then initscript doesn't perform those
+      |#          checks.
+      |ROOTDIR=/var/named/chroot
+    END
+
+    it do
+      should contain_file('/etc/sysconfig/named').with({
+        'ensure'  => 'file',
+        'content' => named_sysconfig_content,
+        'owner'   => 'root',
+        'group'   => 'root',
+        'mode'    => '0644',
+        'require' => 'Package[bind]',
+        'notify'  => 'Service[named]',
+      })
+    end
+
     it do
       should contain_bind__key('rndc-key').with({
         'secret' => 'U803nlXs4b5x6t7UDw8hnw==',
@@ -820,6 +879,16 @@ describe 'bind' do
     end
   end
 
+  context 'with sysconfig_options specified' do
+    let(:params) { { :sysconfig_options => "-4" } }
+
+    it do
+      should contain_file('/etc/sysconfig/named').with({
+        'content' => %r{^OPTIONS="-4"$}
+      })
+    end
+  end
+
   describe 'variable type and content validations' do
     let(:facts) { [mandatory_facts, { :osfamily => 'RedHat', }].reduce(:merge) }
 
@@ -891,7 +960,7 @@ describe 'bind' do
       # /!\ Downgrade for Puppet 3.x: remove fixnum and float from invalid list
       'string' => {
         :name    => %w(package package_ensure rndc_key_secret user group version notify_option recursion zone_statistics
-                       allow_query allow_transfer listen_from dnssec_enable dnssec_validation ),
+                       allow_query allow_transfer listen_from dnssec_enable dnssec_validation sysconfig_options),
         :valid   => ['string'],
         :invalid => [%w(array), { 'ha' => 'sh' }, true, false],
         :message => 'is not a string',

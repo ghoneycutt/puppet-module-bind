@@ -1,3 +1,6 @@
+### v2.1.0 - 2017-08-27
+  * Manage /etc/sysconfig/named
+
 ### v2.0.0 - 2017-06-28
   * bind::zone now take a tuple of the zone and the view as the title.
 

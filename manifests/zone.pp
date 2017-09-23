@@ -33,6 +33,7 @@ define bind::zone (
   $type            = undef, # master or slave
   $update_policies = undef, # mutually exclusive with allow_update
   $allow_update    = undef,
+  $forwarders      = undef,
 ) {
 
   include ::bind
@@ -80,6 +81,11 @@ define bind::zone (
 
   if $allow_update != undef {
     validate_array($allow_update)
+  }
+
+  # Same behavior as allow_update, Array of Strings.
+  if $forwarders != undef {
+    validate_array($forwarders)
   }
 
   if $allow_update != undef and $update_policies != undef {

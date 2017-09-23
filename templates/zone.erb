@@ -19,6 +19,18 @@ zone "<%= @zone %>" {
   allow-update { <%= au.join('; ') %>; };
 <% end -%>
   file "<%= @dir %><% if not @extra_path.nil? -%><%= @extra_path %><% end -%>/<%= @zone %>";
+<% if @forwarders -%>
+<%   fwlst = Array.new -%>
+<%   @forwarders.each do |i| -%>
+<%     if i =~ /^key/ -%>
+<%       # add quotes around name of key -%>
+<%       fwlst << "key \"#{i.split[1]}\"" -%>
+<%     else -%>
+<%       fwlst << i -%>
+<%     end -%>
+<%   end -%>
+  forwarders { <%= fwlst.join('; ') %>; };
+<% end -%>
 <% if not @update_policies.nil? -%>
 
   update-policy

@@ -859,6 +859,10 @@ bind::zones:
       - '10.1.1.0/24'
       - '10.1.2.3'
       - 'key name-of-key'
+    forwarders:
+      - '10.1.1.0/24'
+      - '10.1.2.3'
+      - 'key name-of-key'
 ```
 ---
 
@@ -901,6 +905,10 @@ is required. Value 'rrs' maps to an array of resource records and is optional.
 - *Default*: undef
 
 ---
-#### allow_update (type: Array)
+#### allow_updates (type: Array)
 Values for allow-update declaration within the zone declaration. This is
 mutually exclusive with update_policies.
+
+---
+#### forwarders (type: Array)
+Values for forwarders declaration within the zone declaration.

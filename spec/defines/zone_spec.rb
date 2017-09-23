@@ -23,6 +23,7 @@ describe 'bind::zone' do
         :target     => '/etc/named/zone_lists/internal.zones',
         :extra_path => '/internal',
         :masters    => 'master-internal',
+        :forwarders => ['192.168.0.4', '192.168.0.5'],
         :type       => 'slave',
       }
     end
@@ -34,6 +35,7 @@ describe 'bind::zone' do
       |  type slave;
       |  masters { master-internal; };
       |  file "slaves/internal/rspec";
+      |  forwarders { 192.168.0.4; 192.168.0.5; };
       |};
     END
 
@@ -292,6 +294,68 @@ describe 'bind::zone' do
         |  masters { master-internal; };
         |  allow-update { 10.1.2.3; 10.1.1.0/24; key "my-key-name"; };
         |  file "slaves/internal/rspec";
+        |};
+      END
+
+      it do
+        should contain_file('/etc/named/zones.d/internal/rspec').with({
+          'content' => content,
+        })
+      end
+    end
+  end
+
+  describe 'with forwarders set' do
+    context 'to an array with one element' do
+      let(:params) do
+        {
+          :target     => '/etc/named/zone_lists/internal.zones',
+          :extra_path => '/internal',
+          :masters    => 'master-internal',
+          :type       => 'slave',
+          :forwarders => ['10.1.2.3'],
+        }
+      end
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |zone "rspec" {
+        |  type slave;
+        |  masters { master-internal; };
+        |  file "slaves/internal/rspec";
+        |  forwarders { 10.1.2.3; };
+        |};
+      END
+
+      it do
+        should contain_file('/etc/named/zones.d/internal/rspec').with({
+          'content' => content,
+        })
+      end
+    end
+
+    context 'to an array of multiple elements' do
+      let(:params) do
+        {
+          :target       => '/etc/named/zone_lists/internal.zones',
+          :extra_path   => '/internal',
+          :masters      => 'master-internal',
+          :type         => 'slave',
+          :forwarders => ['10.1.2.3', '10.1.1.0/24', 'key my-key-name'],
+        }
+      end
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |zone "rspec" {
+        |  type slave;
+        |  masters { master-internal; };
+        |  file "slaves/internal/rspec";
+        |  forwarders { 10.1.2.3; 10.1.1.0/24; key "my-key-name"; };
         |};
       END
 

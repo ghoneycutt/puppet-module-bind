@@ -1,3 +1,6 @@
+### v2.2.0 - 2017-09-26
+  * Add ability to specify forwarders config option for each zone
+
 ### v2.1.0 - 2017-08-27
   * Manage /etc/sysconfig/named
 

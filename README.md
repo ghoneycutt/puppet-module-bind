@@ -28,8 +28,9 @@ heavy use of concat fragments.
 # Compatibility
 
 This module is built for use with Puppet v3 (with and without the future
-parser) and Puppet v4 on the following platforms and supports Ruby versions
-1.8.7, 1.9.3, 2.0.0 and 2.1.9.
+parser) and Puppet v4 on the following platforms and supports Ruby
+versions 1.8.7, 1.9.3, 2.0.0 and 2.1.9. See `.travis.yml` for an exact
+matrix.
 
  * EL 6
 

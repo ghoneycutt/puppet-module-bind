@@ -20,16 +20,20 @@ zone "<%= @zone %>" {
 <% end -%>
   file "<%= @dir %><% if not @extra_path.nil? -%><%= @extra_path %><% end -%>/<%= @zone %>";
 <% if @forwarders -%>
-<%   fwlst = Array.new -%>
-<%   @forwarders.each do |i| -%>
-<%     if i =~ /^key/ -%>
-<%       # add quotes around name of key -%>
-<%       fwlst << "key \"#{i.split[1]}\"" -%>
-<%     else -%>
-<%       fwlst << i -%>
+<%   if @forwarders == ['empty'] -%>
+  forwarders {};
+<%   else -%>
+<%     fwlst = Array.new -%>
+<%     @forwarders.each do |i| -%>
+<%       if i =~ /^key/ -%>
+<%         # add quotes around name of key -%>
+<%         fwlst << "key \"#{i.split[1]}\"" -%>
+<%       else -%>
+<%         fwlst << i -%>
+<%       end -%>
 <%     end -%>
-<%   end -%>
   forwarders { <%= fwlst.join('; ') %>; };
+<%   end -%>
 <% end -%>
 <% if not @update_policies.nil? -%>
 

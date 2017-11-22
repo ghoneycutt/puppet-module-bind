@@ -17,8 +17,12 @@ options {
   dump-file "<%= @dump_file %>";
   statistics-file "<%= @statistics_file %>";
   memstatistics-file "<%= @memstatistics_file %>";
-  <%- if not @forwarders.nil? -%>
+  <%- if @forwarders -%>
+  <%-   if @forwarders == ['empty'] -%>
+  forwarders {};
+  <%-   else -%>
   forwarders { <%= @forwarders.join('; ') -%>; };
+  <%-   end -%>
   <%- end -%>
 };
 

@@ -1,3 +1,7 @@
+### v2.3.0 - 2017-11-22
+  * Allow for empty forwarders in named.conf and zones.
+  * Support Puppet v5.
+
 ### v2.2.0 - 2017-09-26
   * Add ability to specify forwarders config option for each zone
 

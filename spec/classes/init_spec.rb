@@ -340,16 +340,22 @@ describe 'bind' do
     it { should contain_file('named_conf').with_content(/^options \{(\n.*)*^\s*recursion yes;(\n.*)*\};/) }
   end
 
-  context 'with forwarders set to valid array [10.0.0.242]' do
+  context "with forwarders set to valid array ['10.0.0.242']" do
     let(:params) { { :forwarders => %w(10.0.0.242) } }
 
     it { should contain_file('named_conf').with_content(/^  forwarders { 10.0.0.242; };/) }
   end
 
-  context 'with forwarders set to valid array [10.0.0.3 10.0.0.242]' do
+  context "with forwarders set to valid array ['10.0.0.3', '10.0.0.242']" do
     let(:params) { { :forwarders => %w(10.0.0.3 10.0.0.242) } }
 
     it { should contain_file('named_conf').with_content(/^  forwarders { 10.0.0.3; 10.0.0.242; };/) }
+  end
+
+  context "with forwarders set to valid array ['empty']" do
+    let(:params) { { :forwarders => %w(empty) } }
+
+    it { should contain_file('named_conf').with_content(/^  forwarders {};/) }
   end
 
   context 'with zone_statistics set to valid string <no>' do

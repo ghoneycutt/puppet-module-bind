@@ -365,6 +365,65 @@ describe 'bind::zone' do
         })
       end
     end
+
+    context "to an array with one element set to 'empty'" do
+      let(:params) do
+        {
+          :target     => '/etc/named/zone_lists/internal.zones',
+          :extra_path => '/internal',
+          :masters    => 'master-internal',
+          :type       => 'slave',
+          :forwarders => ['empty'],
+        }
+      end
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |zone "rspec" {
+        |  type slave;
+        |  masters { master-internal; };
+        |  file "slaves/internal/rspec";
+        |  forwarders {};
+        |};
+      END
+
+      it do
+        should contain_file('/etc/named/zones.d/internal/rspec').with({
+          'content' => content,
+        })
+      end
+    end
+
+    context 'to undef' do
+      let(:params) do
+        {
+          :target     => '/etc/named/zone_lists/internal.zones',
+          :extra_path => '/internal',
+          :masters    => 'master-internal',
+          :type       => 'slave',
+          :forwarders => :undef,
+        }
+      end
+
+      content = <<-END.gsub(/^\s+\|/, '')
+        |# This file is being maintained by Puppet.
+        |# DO NOT EDIT
+        |
+        |zone "rspec" {
+        |  type slave;
+        |  masters { master-internal; };
+        |  file "slaves/internal/rspec";
+        |};
+      END
+
+      it do
+        should contain_file('/etc/named/zones.d/internal/rspec').with({
+          'content' => content,
+        })
+      end
+    end
   end
 
   describe 'variable type and content validations' do

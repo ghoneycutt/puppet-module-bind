@@ -128,7 +128,12 @@ Value of `recursion` option in named.conf.
 
 ---
 #### forwarders (type: Array)
-Value of `forwarders` option in named.conf.
+Value of `forwarders` option in named.conf. If you specify an array with
+a single value of 'empty' it will generate an empty forwarders section.
+
+```
+forwarders {};
+```
 
 - *Default*: undef
 
@@ -909,6 +914,16 @@ is required. Value 'rrs' maps to an array of resource records and is optional.
 Values for allow-update declaration within the zone declaration. This is
 mutually exclusive with update_policies.
 
+- *Default*: undef
+
 ---
 #### forwarders (type: Array)
-Values for forwarders declaration within the zone declaration.
+Values for forwarders declaration within the zone declaration. If you
+specify an array with a single value of 'empty' it will generate an
+empty forwarders section.
+
+```
+forwarders {};
+```
+
+- *Default*: undef
